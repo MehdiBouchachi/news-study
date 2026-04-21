@@ -1,4 +1,10 @@
-import { FiAlertTriangle, FiBookOpen, FiCheck, FiClock, FiInfo } from "react-icons/fi";
+import {
+  FiAlertTriangle,
+  FiBookOpen,
+  FiCheck,
+  FiClock,
+  FiInfo,
+} from "react-icons/fi";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -213,9 +219,7 @@ export function ArticleBlock({
             </span>
             <span className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-white px-3 py-1 text-xs font-semibold text-(--text-muted)">
               <FiClock className="text-[0.8rem]" aria-hidden="true" />
-              <span>
-                {showReminder ? "إعادة القراءة" : "قراءة أولية"}
-              </span>
+              <span>{showReminder ? "إعادة القراءة" : "قراءة أولية"}</span>
             </span>
           </div>
 
@@ -244,7 +248,8 @@ export function ArticleBlock({
             aria-hidden="true"
           />
           <p className="text-right text-xs leading-7 text-(--warning) sm:text-sm">
-            <span className="font-semibold">تنبيه:</span> المصدر هو {disclosureText}
+            <span className="font-semibold">تنبيه:</span> المصدر هو{" "}
+            {disclosureText}
           </p>
         </div>
       )}
