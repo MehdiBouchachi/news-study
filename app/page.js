@@ -1,65 +1,675 @@
-import Image from "next/image";
+"use client";
+
+import {
+  FiAlertTriangle,
+  FiCheckCircle,
+  FiFileText,
+  FiLogOut,
+  FiShield,
+} from "react-icons/fi";
+
+import {
+  ActionRow,
+  ArticleBlock,
+  CheckOption,
+  ConsentChoice,
+  DangerButton,
+  ErrorNotice,
+  FieldLabel,
+  LikertCard,
+  LikertGroup,
+  PrimaryButton,
+  RadioGroup,
+  Shell,
+  SectionHeading,
+  TextField,
+  TextareaField,
+} from "./_components";
+import { useSurveyController } from "./_hooks/useSurveyController";
+import { useStepScroll } from "./_hooks/useStepScroll";
+
+const TOTAL_STEPS = 10;
+
+const articleTitle =
+  "لقاح جديد يظهر كفاءة بنسبة 94% في الوقاية من سلالات كورونا المتحورة";
+const articleCategory = "المحور الطبي";
+const articleParagraphs = [
+  "أظهر لقاح تجريبي جديد فعالية استثنائية في الوقاية من أحدث سلالات فيروس كورونا المتحورة، وفقاً لنتائج دراسة سريرية واسعة النطاق نُشرت مؤخراً. وأفاد الباحثون أن اللقاح حقق نسبة حماية بلغت 94% بين المشاركين في التجربة، مع تسجيل آثار جانبية طفيفة جداً لم تتجاوز الصداع الخفيف أو التعب المؤقت لدى أقل من 3% من الحالات.",
+  "وشملت الدراسة السريرية 10,000 متطوع تتراوح أعمارهم بين 18 و65 عاماً، تم اختيارهم عشوائياً من خمس دول مختلفة، وخضعوا لمراقبة طبية دقيقة على مدار ستة أشهر. وتم تصميم اللقاح باستخدام تقنية الحمض النووي الريبي المرسال (mRNA) المُحسّنة، والتي تستهدف بروتينات الفيروس المتحورة بدقة أعلى من الجيل الأول من اللقاحات.",
+  "وأكد الفريق البحثي أن النتائج تشير إلى أن اللقاح لا يمنع العدوى فحسب، بل يقلل أيضاً بشكل كبير من خطر دخول المستشفى أو تطور الأعراض الشديدة. كما أظهرت التحاليل المختبرية أن الاستجابة المناعية استمرت لمدة تزيد عن خمسة أشهر دون انخفاض ملحوظ في مستويات الأجسام المضادة.",
+  "ومن المتوقع أن تخضع هذه النتائج لمراجعة من قبل الهيئات التنظيمية (مثل منظمة الصحة العالمية والوكالة الأوروبية للأدوية) خلال الأسابيع القادمة، تمهيداً لاعتماده رسمياً. ويُنظر إلى هذا التطور على أنه خطوة حاسمة في إدارة الجائحات المستقبلية، خاصة في ظل التحديات المتزايدة التي تفرضها سرعة تحور الفيروسات التنفسية.",
+];
+
+const preQuestions = [
+  { key: "pre_accuracy", text: "معلومات الخبر دقيقة وموثوقة" },
+  { key: "pre_objective", text: "الخبر يتسم بالموضوعية والحياد" },
+  { key: "pre_share", text: "سأقوم بمشاركة هذا الخبر" },
+];
+
+const postQuestions = [
+  { key: "post_accuracy", text: "معلومات الخبر دقيقة وموثوقة" },
+  { key: "post_objective", text: "الخبر يتسم بالموضوعية والحياد" },
+  { key: "post_share", text: "سأقوم بمشاركة هذا الخبر" },
+];
+
+const sourceTrustQuestions = [
+  {
+    key: "trust_competence_1",
+    text: "الكفاءة: أعتقد أن هذا المصدر يمتلك المهارات اللازمة لإنتاج أخبار دقيقة.",
+  },
+  {
+    key: "trust_competence_2",
+    text: "الكفاءة: يبدو هذا المصدر خبيراً ومتمكناً في معالجة القضايا المعقدة.",
+  },
+  {
+    key: "trust_integrity_1",
+    text: "النزاهة: أثق في أن هذا المصدر يقدم المعلومات بأمانة ودون تلاعب.",
+  },
+  {
+    key: "trust_integrity_2",
+    text: "النزاهة: أعتقد أن هذا المصدر يتسم بالشفافية والالتزام بالمعايير الأخلاقية.",
+  },
+  {
+    key: "trust_benevolence",
+    text: "النزاهة: أشعر أن هذا المصدر يراعي مصلحة القارئ عند صياغة الخبر.",
+  },
+];
+
+const aiReasoningQuestions = [
+  {
+    key: "ai_reason_1",
+    text: "الموضوعية: الذكاء الاصطناعي أكثر حياداً من البشر لأنه لا يملك مشاعر أو أهواء شخصية.",
+  },
+  {
+    key: "ai_reason_2",
+    text: "الدقة: الأنظمة الآلية أقل عرضة للخطأ في نقل الأرقام والإحصائيات مقارنة بالصحفيين.",
+  },
+  {
+    key: "ai_reason_3",
+    text: 'الافتقار للنية: الآلة لا تمتلك نية "الخداع"؛ فهي تعرض البيانات كما هي دون تلاعب متعمد.',
+  },
+  {
+    key: "ai_reason_4",
+    text: "البرود السياقي: الذكاء الاصطناعي غير قادر على فهم المشاعر الإنسانية أو السياقات الثقافية للأخبار.",
+  },
+  {
+    key: "ai_reason_5",
+    text: 'التبعية البرمجية: ثقتي في الآلة تعتمد كلياً على ثقتي في "المبرمج" الذي صممها وليس في الآلة نفسها.',
+  },
+  {
+    key: "ai_reason_6",
+    text: "غياب المسؤولية: لا يمكن الوثوق بالآلة تماماً لأننا لا نستطيع محاسبتها أخلاقياً أو قانونياً عند الخطأ.",
+  },
+];
+
+const postExperimentFeelings = [
+  "الدهشة والانبهار (لم أتوقع أن تكون الآلة بهذا المستوى من الجودة).",
+  "الارتياب والشك (شعرت بضرورة إعادة فحص كل معلومة قرأتها).",
+  "الخداع (شعرت أن الوسيلة الإعلامية لم تكن شفافة معي منذ البداية).",
+  "الاطمئنان (عندما عرفت بوجود عنصر بشري أو ثقتي في دقة الخوارزميات).",
+  "عدم المبالاة (لم يتغير شعوري، ما يهمني هو المحتوى فقط).",
+  "أخرى (يرجى تحديد شعورك بدقة)",
+];
+
+const futureBehaviorOptions = [
+  "سأصبح أكثر حذراً وتشككاً في مصداقية أي خبر أقرؤه.",
+  'سأهتم دائماً بالبحث عن هوية "مُعدّ الخبر" (بشر أم ذكاء اصطناعي) قبل التصديق.',
+  "لن يتغير أسلوبي؛ فالعبرة عندي بدقة المعلومات بغض النظر عن المصدر.",
+  "سأعتمد فقط على المؤسسات الإعلامية الرسمية التي تضمن الإشراف البشري.",
+  "سأثق أكثر في الأخبار الناتجة عن الذكاء الاصطناعي لحيادها ودقتها.",
+];
+
+const likertLabels = ["معارض بشدة", "معارض", "محايد", "موافق", "موافق بشدة"];
+
+const demographics = {
+  gender: ["ذكر", "أنثى"],
+  level: ["ليسانس", "ماستر", "دكتوراه"],
+  specialization: ["علوم إنسانية", "علوم دقيقة", "علوم طبية"],
+  internetUsage: ["أقل من 2س", "2-5س", "+5س"],
+  aiKnowledge: ["منعدمة", "ضعيفة", "متوسطة", "جيدة", "خبير"],
+  aiToolsUsage: ["بانتظام", "أحياناً", "نادراً", "أبداً"],
+};
+
+const disclosureText = "نظام ذكاء اصطناعي بالكامل دون أي تدخل بشري";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
+  const {
+    step,
+    submitted,
+    form,
+    feelings,
+    attentionFlag,
+    error,
+    updateField,
+    toggleFeeling,
+    next,
+    prev,
+    submit,
+  } = useSurveyController({
+    totalSteps: TOTAL_STEPS,
+    disclosureText,
+    preQuestions,
+    postQuestions,
+    sourceTrustQuestions,
+    aiReasoningQuestions,
+  });
+
+  useStepScroll(step);
+
+  if (submitted && form.consent === "no") {
+    return (
+      <Shell showProgress={false}>
+        <div className="px-4 py-16 text-center sm:py-20">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-(--blue-200) bg-(--blue-50) text-(--blue-700)">
+            <FiLogOut className="text-3xl" aria-hidden="true" />
+          </div>
+          <h1 className="mb-3 text-2xl font-bold text-(--text-strong) sm:text-3xl">
+            شكراً لاهتمامك
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mx-auto max-w-md text-sm leading-8 text-(--text-muted) sm:text-base">
+            تم إنهاء الاستبيان لأن المشاركة تتطلب الموافقة الطوعية المسبقة.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </Shell>
+    );
+  }
+
+  if (step === 10) {
+    return (
+      <Shell showProgress={false}>
+        <div className="px-4 py-8 sm:px-6 sm:py-10">
+          <div className="mx-auto max-w-4xl text-right">
+            <div className="mb-8 text-center">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-(--blue-200) bg-(--success-bg) text-(--success) shadow-[0_0_0_8px_rgba(47,133,90,0.07)]">
+                <FiCheckCircle className="text-3xl" aria-hidden="true" />
+              </div>
+              <h1 className="text-2xl font-bold text-(--success) sm:text-3xl">
+                شكراً لك على مشاركتك!
+              </h1>
+              <p className="mt-2 text-sm text-(--text-muted) sm:text-base">
+                لقد أتممت الدراسة بنجاح
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              <p className="text-sm font-semibold text-(--blue-900) sm:text-base">
+                عزيزي الطالب / المشارك،
+              </p>
+              <p className="text-sm leading-8 text-(--text-body) sm:text-base">
+                نود أن نعرب لك عن خالص امتناننا لوقتك وجهدك في إتمام هذه
+                الدراسة. بفضل إجاباتك الصادقة، سنتمكن من فهم أعمق لكيفية تفاعل
+                الجمهور مع تكنولوجيا الذكاء الاصطناعي في المجال الإعلامي.
+              </p>
+
+              <div className="card-soft border-(--blue-200) bg-(--blue-50) p-4 sm:p-5">
+                <h2 className="mb-3 text-right text-base font-bold text-(--blue-800) sm:text-lg">
+                  توضيح هام حول طبيعة الدراسة (Debriefing)
+                </h2>
+                <p className="text-right text-sm leading-8 text-(--blue-900) sm:text-base">
+                  نود إعلامك بأن «الإخفاء المؤقت» لهوية مصادر الأخبار في بداية
+                  التجربة كان ضرورة منهجية بحثية، وذلك لضمان الحصول على تقييمك
+                  العفوي للمحتوى دون تأثير مسبق بنوع المصدر. الهدف هو قياس
+                  «الفجوة في الإدراك» بدقة علمية، وليس تضليل المشاركين.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-(--text-strong) sm:text-base">
+                  نؤكد لك ما يلي:
+                </p>
+                {[
+                  {
+                    icon: FiShield,
+                    bold: "الخصوصية:",
+                    text: "كافة البيانات التي قدمتها مشفرة، وتُستخدم لأغراض البحث العلمي فقط.",
+                  },
+                  {
+                    icon: FiFileText,
+                    bold: "الأخبار المستخدمة:",
+                    text: "جميع النصوص خضعت للتحكيم لضمان جودتها.",
+                  },
+                  {
+                    icon: FiLogOut,
+                    bold: "حق الانسحاب:",
+                    text: "يمكنك التواصل معنا عبر إيميل الباحث لطلب حذف استجابتك.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.bold}
+                    className="flex items-start gap-3 rounded-md border border-(--border) bg-white px-4 py-3 shadow-(--shadow-xs)"
+                  >
+                    <item.icon
+                      className="mt-0.5 shrink-0 text-base text-(--blue-700)"
+                      aria-hidden="true"
+                    />
+                    <p className="flex-1 text-right text-sm leading-7 text-(--text-body) sm:text-base">
+                      <strong className="text-(--text-strong)">
+                        {item.bold}
+                      </strong>{" "}
+                      {item.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-(--border) pt-4 text-center text-sm text-(--text-muted)">
+                <p className="font-semibold">الطالب الباحث: نحال جيـلالي</p>
+                <p>إشراف: الدكتور الهاشمي بيدوش</p>
+                <p>جامعة البليدة 2</p>
+              </div>
+
+              {attentionFlag && (
+                <div className="rounded-md border border-(--error-border) bg-(--error-bg) px-4 py-3 text-right text-sm text-(--error)">
+                  ملاحظة داخلية: تم تسجيل مخالفة في سؤال الانتباه.
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </Shell>
+    );
+  }
+
+  return (
+    <Shell step={step}>
+      {step === 1 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <div className="mx-auto max-w-4xl">
+            <div className="mb-7 text-right">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-(--blue-200) bg-(--blue-50) px-3 py-1 text-xs font-semibold tracking-wide text-(--blue-700)">
+                دراسة أكاديمية
+              </div>
+              <h1 className="text-[1.55rem] font-bold leading-snug text-(--text-strong) sm:text-[1.9rem] lg:text-[2.1rem]">
+                دراسة حول إدراك جودة الأخبار الرقمية
+              </h1>
+            </div>
+
+            <div className="mb-6 space-y-4 text-right text-sm leading-8 text-(--text-body) sm:text-base">
+              <p>عزيزي الطالب / الطالبة:</p>
+              <p>
+                ندعوك للمشاركة في هذه الدراسة الأكاديمية التي تهدف إلى تقييم
+                جودة الأخبار الرقمية لدى طلبة الجامعات. ستستغرق التجربة حوالي{" "}
+                <strong>10 دقائق</strong>.
+              </p>
+              <p>
+                نؤكد لك أن جميع بياناتك ستعامل بسرية تامة وتستخدم لأغراض البحث
+                العلمي فقط. مشاركتك <strong>طوعية</strong> ويمكنك الانسحاب في أي
+                وقت.
+              </p>
+              <p>
+                نود أن نعرب لك عن خالص امتناننا لوقتك وجهدك في إتمام هذه
+                الدراسة.
+              </p>
+            </div>
+
+            <div className="border-t border-(--border) pt-6">
+              <FieldLabel required>هل توافق على المشاركة؟</FieldLabel>
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
+                {[
+                  {
+                    val: "yes",
+                    label: "نعم، أوافق على المشاركة",
+                    primary: true,
+                  },
+                  { val: "no", label: "لا، أرفض المشاركة", primary: false },
+                ].map(({ val, label, primary }) => {
+                  const selected = form.consent === val;
+                  return (
+                    <ConsentChoice
+                      key={val}
+                      selected={selected}
+                      primary={primary}
+                      label={label}
+                      onClick={() => updateField("consent", val)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            <ErrorNotice message={error} />
+            <div className="mt-6 flex justify-start">
+              <PrimaryButton onClick={next}>ابدأ الاستبيان</PrimaryButton>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {step === 2 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <SectionHeading
+            eyebrow="الخطوة 1"
+            title="البيانات الديموغرافية والتقنية"
+          />
+
+          <div className="space-y-7">
+            <div>
+              <FieldLabel required>الجنس</FieldLabel>
+              <RadioGroup
+                name="gender"
+                value={form.gender}
+                onChange={updateField}
+                options={demographics.gender}
+                columns={2}
+              />
+            </div>
+            <div>
+              <FieldLabel required>السن</FieldLabel>
+              <TextField
+                value={form.age}
+                onChange={(e) => updateField("age", e.target.value)}
+                placeholder="أدخل العمر بالأرقام"
+              />
+            </div>
+            <div>
+              <FieldLabel required>المستوى الدراسي</FieldLabel>
+              <RadioGroup
+                name="level"
+                value={form.level}
+                onChange={updateField}
+                options={demographics.level}
+                columns={3}
+              />
+            </div>
+            <div>
+              <FieldLabel required>التخصص</FieldLabel>
+              <RadioGroup
+                name="specialization"
+                value={form.specialization}
+                onChange={updateField}
+                options={demographics.specialization}
+                columns={3}
+              />
+            </div>
+            <div>
+              <FieldLabel required>معدل استخدام الإنترنت يومياً</FieldLabel>
+              <RadioGroup
+                name="internetUsage"
+                value={form.internetUsage}
+                onChange={updateField}
+                options={demographics.internetUsage}
+                columns={3}
+              />
+            </div>
+            <div>
+              <FieldLabel required>
+                مدى معرفتك بتقنيات الذكاء الاصطناعي
+              </FieldLabel>
+              <RadioGroup
+                name="aiKnowledge"
+                value={form.aiKnowledge}
+                onChange={updateField}
+                options={demographics.aiKnowledge}
+                columns={4}
+              />
+            </div>
+            <div>
+              <FieldLabel required>
+                هل تستخدم أدوات مثل ChatGPT أو Gemini؟
+              </FieldLabel>
+              <RadioGroup
+                name="aiToolsUsage"
+                value={form.aiToolsUsage}
+                onChange={updateField}
+                options={demographics.aiToolsUsage}
+                columns={4}
+              />
+            </div>
+          </div>
+
+          <ErrorNotice message={error} />
+          <ActionRow
+            onPrev={prev}
+            onNext={next}
+            step={step}
+            prevDisabled={step === 1}
+          />
+        </section>
+      )}
+
+      {step === 3 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <SectionHeading eyebrow="الخطوة 2" title="تعليمات القراءة" />
+
+          <div className="card-soft border-(--warning-border) bg-(--warning-bg) p-5 sm:p-6">
+            <p className="text-right text-sm leading-8 text-(--text-body) sm:text-base">
+              «عزيزي الطالب، ستُعرض عليك الآن أخبار قصيرة تتناول قضايا معاصرة
+              (طبية، بيئية، وتقنية). نرجو منك قراءة كل خبر بعناية وتركيز تامين،
+              وكأنك تتصفحه في وسيلة إعلامية رسمية، حيث إن إجاباتك اللاحقة تعتمد
+              كلياً على فهمك الدقيق لمحتوى هذه النصوص وأسلوب صياغتها. بعد قراءة
+              كل خبر ستظهر لك مجموعة من الأسئلة لتقييم انطباعك الأول حوله.»
+            </p>
+            <div className="mt-5 border-t border-(--warning-border) pt-4">
+              <p className="text-right text-sm font-semibold text-(--warning) sm:text-base">
+                ملاحظة: لا توجد إجابات صحيحة أو خاطئة، نحن نهتم فقط برأيك الشخصي
+                وتقييمك النقدي كطالب جامعي.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 flex justify-start">
+            <PrimaryButton onClick={next}>ابدأ التجربة</PrimaryButton>
+          </div>
+        </section>
+      )}
+
+      {step === 4 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <ArticleBlock
+            title={articleTitle}
+            category={articleCategory}
+            paragraphs={articleParagraphs}
+            showReminder={false}
+            disclosureText={disclosureText}
+          />
+          <LikertGroup
+            title="جدول تقييم الخبر"
+            sub="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
+            questions={preQuestions}
+            form={form}
+            onChange={updateField}
+            labels={likertLabels}
+          />
+          <ErrorNotice message={error} />
+          <ActionRow
+            onPrev={prev}
+            onNext={next}
+            step={step}
+            prevDisabled={false}
+          />
+        </section>
+      )}
+
+      {step === 5 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <div className="overflow-hidden rounded-[14px] border border-(--warning-border) bg-white shadow-(--shadow-sm)">
+            <div className="bg-[linear-gradient(135deg,#fff6e8,#f7ebd4)] px-5 py-4 text-center sm:px-6">
+              <FiAlertTriangle
+                className="mx-auto text-4xl text-(--amber-700)"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="px-5 py-6 sm:px-8 sm:py-8">
+              <h2 className="mb-4 text-center text-xl font-bold text-(--amber-700) sm:text-2xl">
+                تنبيه هام
+              </h2>
+              <p className="mb-4 text-center text-sm font-semibold text-(--text-strong) sm:text-base">
+                الأخبار التي قرأتها أنتجها:
+              </p>
+              <div className="mx-auto mb-6 max-w-lg rounded-md border border-(--warning-border) bg-(--warning-bg) px-4 py-4 text-center text-base font-semibold leading-7 text-(--text-strong)">
+                {disclosureText}
+              </div>
+              <p className="mb-6 text-center text-sm leading-7 text-(--text-muted) sm:text-base">
+                سنقوم الآن بإعادة عرض الخبر عليك لتقييمه مجدداً في ضوء هذه
+                المعلومة.
+              </p>
+              <div className="flex justify-center">
+                <DangerButton onClick={next}>متابعة التقييم</DangerButton>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {step === 6 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <ArticleBlock
+            title={articleTitle}
+            category={articleCategory}
+            paragraphs={articleParagraphs}
+            showReminder
+            disclosureText={disclosureText}
+          />
+          <LikertGroup
+            title="جدول تقييم الخبر"
+            sub="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
+            questions={postQuestions}
+            form={form}
+            onChange={updateField}
+            labels={likertLabels}
+          />
+          <ErrorNotice message={error} />
+          <ActionRow
+            onPrev={prev}
+            onNext={next}
+            step={step}
+            prevDisabled={false}
+          />
+        </section>
+      )}
+
+      {step === 7 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <SectionHeading
+            eyebrow="الخطوة 5"
+            title="قياس الثقة في المصدر"
+            subtitle={`بناءً على معرفتك الآن بأن المصدر هو "${disclosureText}"، يرجى تحديد مدى اتفاقك مع العبارات التالية:`}
+          />
+          <div className="space-y-4">
+            {sourceTrustQuestions.map((question) => (
+              <LikertCard
+                key={question.key}
+                name={question.key}
+                text={question.text}
+                value={form[question.key]}
+                onChange={updateField}
+                labels={likertLabels}
+              />
+            ))}
+          </div>
+          <ErrorNotice message={error} />
+          <ActionRow
+            onPrev={prev}
+            onNext={next}
+            step={step}
+            prevDisabled={false}
+          />
+        </section>
+      )}
+
+      {step === 8 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <SectionHeading
+            eyebrow="الخطوة 6"
+            title="مقياس الاستدلال الآلي"
+            subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية التي تصف أنظمة الذكاء الاصطناعي بشكل عام عند استخدامها في كتابة الأخبار:"
+          />
+          <div className="space-y-4">
+            {aiReasoningQuestions.map((question) => (
+              <LikertCard
+                key={question.key}
+                name={question.key}
+                text={question.text}
+                value={form[question.key]}
+                onChange={updateField}
+                labels={likertLabels}
+              />
+            ))}
+          </div>
+          <ErrorNotice message={error} />
+          <ActionRow
+            onPrev={prev}
+            onNext={next}
+            step={step}
+            prevDisabled={false}
+          />
+        </section>
+      )}
+
+      {step === 9 && (
+        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <SectionHeading eyebrow="الخطوة 7" title="ما بعد التجربة" />
+
+          <div className="space-y-8">
+            <div>
+              <FieldLabel>
+                ما هو شعورك اللحظي أو انطباعك الأول عند اكتشاف هوية المصدر في
+                منتصف التجربة؟
+                <span className="mr-2 text-xs font-normal text-(--error)">
+                  (يمكنك اختيار أكثر من إجابة)
+                </span>
+              </FieldLabel>
+              <div className="space-y-2.5">
+                {postExperimentFeelings.map((item) => (
+                  <CheckOption
+                    key={item}
+                    checked={feelings.includes(item)}
+                    onChange={() => toggleFeeling(item)}
+                    label={item}
+                  />
+                ))}
+              </div>
+              {feelings.includes("أخرى (يرجى تحديد شعورك بدقة)") && (
+                <div className="mt-3">
+                  <TextField
+                    value={form.otherFeelingText}
+                    onChange={(e) =>
+                      updateField("otherFeelingText", e.target.value)
+                    }
+                    placeholder="اكتب الشعور الآخر هنا..."
+                  />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <FieldLabel required>
+                بناءً على تجربتك اليوم، كيف ستكون طريقتك في تقييم الأخبار
+                الرقمية مستقبلاً؟
+              </FieldLabel>
+              <RadioGroup
+                name="futureBehavior"
+                value={form.futureBehavior}
+                onChange={updateField}
+                options={futureBehaviorOptions}
+              />
+            </div>
+
+            <div>
+              <FieldLabel required>
+                يرجى توضيح سبب اختيارك للإجابة السابقة بإيجاز، وكيف أثرت هذه
+                التجربة على نظرتك «للثقة» في الإعلام الرقمي؟
+              </FieldLabel>
+              <TextareaField
+                value={form.finalExplanation}
+                onChange={(e) =>
+                  updateField("finalExplanation", e.target.value)
+                }
+                placeholder="اكتب إجابتك هنا..."
+                rows={6}
+              />
+            </div>
+          </div>
+
+          <ErrorNotice message={error} />
+          <ActionRow
+            onPrev={prev}
+            onSubmit={submit}
+            step={step}
+            prevDisabled={false}
+          />
+        </section>
+      )}
+    </Shell>
   );
 }
