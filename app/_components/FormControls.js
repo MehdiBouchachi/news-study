@@ -1,4 +1,4 @@
-import { FiAlertTriangle, FiCheck } from "react-icons/fi";
+import { FiAlertTriangle, FiBookOpen, FiCheck, FiClock, FiInfo } from "react-icons/fi";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -203,48 +203,82 @@ export function ArticleBlock({
   disclosureText,
 }) {
   return (
-    <div className="mb-6 overflow-hidden rounded-md border border-(--border) bg-white shadow-(--shadow-sm) sm:mb-7">
-      <div className="flex items-center justify-between gap-4 border-b border-(--border) bg-[linear-gradient(135deg,#f8fbff,#eef6fd)] px-4 py-3.5 sm:px-6">
-        <span className="text-xs font-semibold text-(--text-muted) sm:text-sm">
-          {showReminder
-            ? "التقييم البعدي — الخبر 1 من 1"
-            : "التقييم القبلي — الخبر 1 من 1"}
-        </span>
+    <article className="mb-6 overflow-hidden rounded-[18px] border border-(--border) bg-white shadow-[0_18px_40px_rgba(20,40,70,0.07)] sm:mb-7">
+      <div className="border-b border-(--border) bg-[linear-gradient(135deg,#f7fbff,#edf6fd)] px-4 py-4 sm:px-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-(--blue-200) bg-white px-3 py-1 text-xs font-semibold text-(--blue-700) shadow-[var(--shadow-xs)]">
+              <FiBookOpen className="text-[0.8rem]" aria-hidden="true" />
+              <span>الخبر الرئيسي</span>
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-white px-3 py-1 text-xs font-semibold text-(--text-muted)">
+              <FiClock className="text-[0.8rem]" aria-hidden="true" />
+              <span>
+                {showReminder ? "إعادة القراءة" : "قراءة أولية"}
+              </span>
+            </span>
+          </div>
 
-        <span className="rounded-md border border-(--blue-200) bg-white px-3 py-1 text-xs font-semibold text-(--blue-700)">
-          {category}
-        </span>
+          <span className="rounded-full border border-(--blue-200) bg-white px-3 py-1 text-xs font-semibold text-(--blue-700)">
+            {category}
+          </span>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3 rounded-[14px] border border-(--blue-100) bg-white/80 px-4 py-3">
+          <span className="text-xs font-semibold text-(--text-muted) sm:text-sm">
+            {showReminder
+              ? "التقييم البعدي — خبر واحد فقط"
+              : "التقييم القبلي — خبر واحد فقط"}
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full bg-(--blue-50) px-3 py-1 text-xs font-semibold text-(--blue-700)">
+            <FiInfo className="text-[0.8rem]" aria-hidden="true" />
+            <span>اقرأ بعناية</span>
+          </span>
+        </div>
       </div>
 
       {showReminder && (
-        <div className="flex items-center gap-2 border-b border-(--warning-border) bg-(--warning-bg) px-4 py-3 sm:px-6">
+        <div className="flex items-start gap-3 border-b border-(--warning-border) bg-(--warning-bg) px-4 py-3 sm:px-6">
           <FiAlertTriangle
-            className="shrink-0 text-base text-(--warning)"
+            className="mt-0.5 shrink-0 text-base text-(--warning)"
             aria-hidden="true"
           />
-          <span className="text-xs font-semibold text-(--warning) sm:text-sm">
-            تذكير: المصدر هو {disclosureText}
-          </span>
+          <p className="text-right text-xs leading-7 text-(--warning) sm:text-sm">
+            <span className="font-semibold">تنبيه:</span> المصدر هو {disclosureText}
+          </p>
         </div>
       )}
 
-      <div className="px-4 py-5 sm:px-6 sm:py-6">
-        <h3 className="mb-5 border-r-[3px] border-(--blue-500) pr-3 text-right text-lg font-bold leading-9 text-(--text-strong) sm:text-2xl sm:leading-[2.15rem]">
-          {title}
-        </h3>
-
-        <div className="mx-auto max-w-[72ch] space-y-5">
-          {paragraphs.map((paragraph, index) => (
-            <p
-              key={index}
-              className="text-right text-[0.98rem] leading-9 text-(--text-body) sm:text-[1.03rem]"
-            >
-              {paragraph}
+      <div className="px-4 py-6 sm:px-6 sm:py-7">
+        <div className="mx-auto max-w-[76ch]">
+          <div className="mb-5 border-r-[4px] border-(--blue-500) pr-4">
+            <h3 className="text-right text-xl font-bold leading-[1.8] text-(--text-strong) sm:text-[2rem] sm:leading-[2.2rem]">
+              {title}
+            </h3>
+            <p className="mt-2 text-right text-sm leading-7 text-(--text-muted) sm:text-base">
+              هذا النص هو المادة الأساسية التي ستقيّمها في هذه الجولة، مع الحفاظ
+              على نفس المضمون في القراءة الأولى والبعدية.
             </p>
-          ))}
+          </div>
+
+          <div className="rounded-[16px] bg-[linear-gradient(180deg,#ffffff,#f9fcff)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:p-5">
+            <div className="space-y-5">
+              {paragraphs.map((paragraph, index) => (
+                <p
+                  key={index}
+                  className={cn(
+                    "text-right text-[0.98rem] leading-9 text-(--text-body) sm:text-[1.04rem]",
+                    index === 0 && "font-medium text-(--text-strong)",
+                  )}
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
