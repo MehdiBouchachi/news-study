@@ -94,12 +94,12 @@ export function RadioGroup({ name, value, onChange, options, columns = 1 }) {
 
 export function LikertCard({ name, text, value, onChange, labels = [] }) {
   return (
-    <div className="card-soft rounded-md border border-(--border) p-4 sm:p-5">
-      <p className="mb-4 text-right text-sm font-semibold leading-8 text-(--text-strong) sm:text-[1rem]">
+    <div className="py-4 sm:py-5">
+      <p className="mb-5 text-right text-base font-semibold leading-8 text-(--text-strong) sm:text-[1.05rem]">
         {text} <span className="text-(--error)">*</span>
       </p>
 
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-5 sm:gap-2.5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-5 sm:gap-4">
         {(labels || []).map((label, index) => {
           const optVal = String(index + 1);
           const selected = value === optVal;
@@ -108,8 +108,8 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
             <label
               key={optVal}
               className={cn(
-                "group relative flex min-h-[74px] cursor-pointer flex-col items-center justify-center gap-2 rounded-md border px-3 py-3 text-center transition-all duration-200",
-                "hover:border-(--blue-300) hover:bg-(--blue-50)",
+                "group relative flex min-h-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-md border px-4 py-4 text-center transition-all duration-200",
+                "hover:-translate-y-[1px] hover:border-(--blue-300) hover:bg-(--blue-50)",
                 "focus-within:ring-2 focus-within:ring-(--blue-200) focus-within:ring-offset-1",
                 selected
                   ? "border-(--blue-600) bg-(--blue-50)"
@@ -117,7 +117,7 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
               )}
               style={{
                 boxShadow: selected
-                  ? "0 0 0 2px rgba(102,163,218,0.12), var(--shadow-xs)"
+                  ? "0 0 0 2px rgba(74,134,198,0.12), 0 10px 22px rgba(20,40,70,0.08)"
                   : "var(--shadow-xs)",
               }}
             >
@@ -130,37 +130,21 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
                 className="sr-only"
               />
 
-              <div
-                className={cn(
-                  "relative flex h-4 w-4 items-center justify-center rounded-full border transition-all duration-200",
-                  selected
-                    ? "border-(--blue-600) bg-white"
-                    : "border-(--border-strong) bg-white group-hover:border-(--blue-400)",
-                )}
-              >
-                <div
-                  className={cn(
-                    "h-2 w-2 rounded-full transition-all duration-200",
-                    selected
-                      ? "scale-100 bg-(--blue-600) opacity-100"
-                      : "scale-50 bg-(--blue-500) opacity-0",
-                  )}
-                />
-              </div>
-
               <span
                 className={cn(
-                  "text-sm leading-6 sm:text-xs sm:leading-tight",
+                  "text-sm leading-7 sm:text-[0.95rem]",
                   selected
-                    ? "font-semibold text-(--blue-900)"
-                    : "font-medium text-(--text-muted)",
+                    ? "font-bold text-(--blue-900)"
+                    : "font-semibold text-(--text-body)",
                 )}
               >
                 {label}
               </span>
 
               {selected && (
-                <span className="pointer-events-none absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-(--blue-500)" />
+                <>
+                  <span className="pointer-events-none absolute inset-y-0 right-0 w-[3px] bg-(--blue-500)" />
+                </>
               )}
             </label>
           );
@@ -169,10 +153,9 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
     </div>
   );
 }
-
 export function LikertGroup({ title, sub, questions, form, onChange, labels }) {
   return (
-    <div className="card-soft rounded-md border border-(--border) p-4 sm:p-6">
+    <div className="py-1">
       {title && (
         <h3 className="mb-1 text-right text-lg font-bold text-(--text-strong) sm:text-xl">
           {title}
@@ -180,21 +163,28 @@ export function LikertGroup({ title, sub, questions, form, onChange, labels }) {
       )}
 
       {sub && (
-        <p className="mb-5 max-w-[64ch] text-right text-xs leading-7 text-(--text-muted) sm:text-sm">
+        <p className="mb-6 max-w-[64ch] text-right text-sm leading-7 text-(--text-muted)">
           {sub}
         </p>
       )}
 
-      <div className="space-y-4">
-        {questions.map((q) => (
-          <LikertCard
+      <div className="space-y-5">
+        {questions.map((q, index) => (
+          <div
             key={q.key}
-            name={q.key}
-            text={q.text}
-            value={form[q.key]}
-            onChange={onChange}
-            labels={labels}
-          />
+            className={cn(
+              "pb-5",
+              index !== questions.length - 1 && "border-b border-(--border)",
+            )}
+          >
+            <LikertCard
+              name={q.key}
+              text={q.text}
+              value={form[q.key]}
+              onChange={onChange}
+              labels={labels}
+            />
+          </div>
         ))}
       </div>
     </div>
