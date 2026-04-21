@@ -94,12 +94,12 @@ export function RadioGroup({ name, value, onChange, options, columns = 1 }) {
 
 export function LikertCard({ name, text, value, onChange, labels = [] }) {
   return (
-    <div className="py-4 sm:py-5">
-      <p className="mb-5 text-right text-base font-semibold leading-8 text-(--text-strong) sm:text-[1.05rem]">
+    <div className="rounded-md border border-(--border) bg-white p-4 sm:p-5">
+      <p className="mb-4 text-right text-base font-semibold leading-8 text-(--text-strong) sm:text-[1.02rem]">
         {text} <span className="text-(--error)">*</span>
       </p>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-5 sm:gap-4">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-5 sm:gap-3">
         {(labels || []).map((label, index) => {
           const optVal = String(index + 1);
           const selected = value === optVal;
@@ -108,8 +108,8 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
             <label
               key={optVal}
               className={cn(
-                "group relative flex min-h-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-md border px-4 py-4 text-center transition-all duration-200",
-                "hover:-translate-y-[1px] hover:border-(--blue-300) hover:bg-(--blue-50)",
+                "flex min-h-[72px] cursor-pointer items-center justify-center rounded-md border px-4 py-3 text-center transition-all duration-200",
+                "hover:border-(--blue-300) hover:bg-(--blue-50)",
                 "focus-within:ring-2 focus-within:ring-(--blue-200) focus-within:ring-offset-1",
                 selected
                   ? "border-(--blue-600) bg-(--blue-50)"
@@ -117,8 +117,8 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
               )}
               style={{
                 boxShadow: selected
-                  ? "0 0 0 2px rgba(74,134,198,0.12), 0 10px 22px rgba(20,40,70,0.08)"
-                  : "var(--shadow-xs)",
+                  ? "0 0 0 1px rgba(74,134,198,0.10)"
+                  : "none",
               }}
             >
               <input
@@ -132,7 +132,7 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
 
               <span
                 className={cn(
-                  "text-sm leading-7 sm:text-[0.95rem]",
+                  "text-sm leading-7 sm:text-[0.94rem]",
                   selected
                     ? "font-bold text-(--blue-900)"
                     : "font-semibold text-(--text-body)",
@@ -140,12 +140,6 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
               >
                 {label}
               </span>
-
-              {selected && (
-                <>
-                  <span className="pointer-events-none absolute inset-y-0 right-0 w-[3px] bg-(--blue-500)" />
-                </>
-              )}
             </label>
           );
         })}
@@ -157,34 +151,27 @@ export function LikertGroup({ title, sub, questions, form, onChange, labels }) {
   return (
     <div className="py-1">
       {title && (
-        <h3 className="mb-1 text-right text-lg font-bold text-(--text-strong) sm:text-xl">
+        <h3 className="mb-2 text-right text-[1.35rem] font-bold text-(--text-strong) sm:text-[1.6rem]">
           {title}
         </h3>
       )}
 
       {sub && (
-        <p className="mb-6 max-w-[64ch] text-right text-sm leading-7 text-(--text-muted)">
+        <p className="mb-6 text-right text-sm leading-7 text-(--text-muted) sm:text-base">
           {sub}
         </p>
       )}
 
-      <div className="space-y-5">
-        {questions.map((q, index) => (
-          <div
+      <div className="space-y-4">
+        {questions.map((q) => (
+          <LikertCard
             key={q.key}
-            className={cn(
-              "pb-5",
-              index !== questions.length - 1 && "border-b border-(--border)",
-            )}
-          >
-            <LikertCard
-              name={q.key}
-              text={q.text}
-              value={form[q.key]}
-              onChange={onChange}
-              labels={labels}
-            />
-          </div>
+            name={q.key}
+            text={q.text}
+            value={form[q.key]}
+            onChange={onChange}
+            labels={labels}
+          />
         ))}
       </div>
     </div>

@@ -48,14 +48,12 @@ export function ProgressHeader({ step, total }) {
 
 export function Shell({ children, step, showProgress = true }) {
   return (
-    <main className="min-h-screen" style={{ overflowAnchor: "none" }}>
+    <main className="min-h-screen bg-white" style={{ overflowAnchor: "none" }}>
       <TopBar />
       {showProgress && <ProgressHeader step={step} total={10} />}
 
-      <div className="section-shell py-4 sm:py-7 lg:py-10">
-        <div className="step-enter overflow-hidden rounded-[var(--r-lg)] border border-(--border) bg-(--surface) shadow-(--shadow-sm)">
-          {children}
-        </div>
+      <div className="py-4 sm:py-7 lg:py-10">
+        <div className="step-enter">{children}</div>
       </div>
     </main>
   );
