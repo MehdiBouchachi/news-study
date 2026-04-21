@@ -1,5 +1,9 @@
 import { FiArrowLeft, FiArrowRight, FiCheck } from "react-icons/fi";
 
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export function Button({
   children,
   onClick,
@@ -9,14 +13,38 @@ export function Button({
   disabled = false,
 }) {
   const variants = {
-    primary:
-      "border-transparent bg-[linear-gradient(135deg,var(--blue-700),var(--teal-600))] text-white shadow-[0_10px_18px_rgba(58,113,170,0.16)] hover:brightness-105",
-    secondary:
-      "border-(--border) bg-white text-(--text-body) hover:bg-(--blue-50)",
-    danger:
-      "border-transparent bg-[linear-gradient(135deg,#cf5a51,#b44a43)] text-white shadow-[0_10px_18px_rgba(180,74,67,0.14)] hover:brightness-105",
-    ghost:
-      "border-(--border) bg-transparent text-(--text-body) hover:bg-(--blue-50)",
+    primary: cn(
+      "border-transparent text-white",
+      "bg-(--blue-600)",
+      "shadow-[0_6px_14px_rgba(74,134,198,0.18)]",
+      "hover:bg-(--blue-700)",
+      "hover:shadow-[0_8px_18px_rgba(74,134,198,0.22)]",
+      "active:bg-(--blue-800)",
+    ),
+
+    secondary: cn(
+      "border-(--border)",
+      "bg-white",
+      "text-(--text-body)",
+      "shadow-[var(--shadow-xs)]",
+      "hover:border-(--blue-300)",
+      "hover:bg-(--blue-50)",
+    ),
+
+    danger: cn(
+      "border-transparent text-white",
+      "bg-[var(--error)]",
+      "shadow-[0_6px_14px_rgba(192,75,68,0.16)]",
+      "hover:bg-[#a63f38]",
+      "active:bg-[#8e342f]",
+    ),
+
+    ghost: cn(
+      "border-transparent",
+      "bg-transparent",
+      "text-(--text-body)",
+      "hover:bg-(--blue-50)",
+    ),
   };
 
   return (
@@ -24,12 +52,25 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`focus-ring inline-flex min-h-11 items-center justify-center rounded-md border px-5 py-3 text-sm font-semibold transition-all active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:text-base ${variants[variant]} ${className}`}
+      className={cn(
+        "focus-ring inline-flex min-h-11 items-center justify-center gap-2",
+        "rounded-md border px-5 py-3 text-sm font-semibold",
+        "transition-all duration-200",
+        "active:scale-[0.97]",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        "sm:px-6 sm:text-base",
+        variants[variant],
+        className,
+      )}
     >
       {children}
     </button>
   );
 }
+
+/* ===============================
+   SHORTCUT BUTTONS
+================================= */
 
 export function PrimaryButton(props) {
   return <Button {...props} variant="primary" />;
@@ -43,29 +84,28 @@ export function DangerButton(props) {
   return <Button {...props} variant="danger" />;
 }
 
+/* ===============================
+   ACTION ROW
+================================= */
+
 export function ActionRow({ onPrev, onNext, onSubmit, step, prevDisabled }) {
   return (
     <div className="mt-8 border-t border-(--border) pt-5 sm:mt-10 sm:pt-6">
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
         <SecondaryButton onClick={onPrev} disabled={prevDisabled}>
-          <span className="inline-flex items-center gap-2">
-            <FiArrowRight aria-hidden="true" />
-            <span>السابق</span>
-          </span>
+          <FiArrowRight />
+          <span>السابق</span>
         </SecondaryButton>
+
         {onSubmit ? (
           <PrimaryButton onClick={onSubmit}>
-            <span className="inline-flex items-center gap-2">
-              <FiCheck aria-hidden="true" />
-              <span>إنهاء وإرسال</span>
-            </span>
+            <FiCheck />
+            <span>إنهاء وإرسال</span>
           </PrimaryButton>
         ) : (
           <PrimaryButton onClick={onNext}>
-            <span className="inline-flex items-center gap-2">
-              <span>{step === 4 ? "الخبر التالي" : "التالي"}</span>
-              <FiArrowLeft aria-hidden="true" />
-            </span>
+            <span>{step === 4 ? "الخبر التالي" : "التالي"}</span>
+            <FiArrowLeft />
           </PrimaryButton>
         )}
       </div>

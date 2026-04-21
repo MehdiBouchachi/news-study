@@ -132,6 +132,21 @@ const demographics = {
 
 const disclosureText = "نظام ذكاء اصطناعي بالكامل دون أي تدخل بشري";
 
+function StepSection({ children, width = "default" }) {
+  const widthClass =
+    width === "wide"
+      ? "mx-auto max-w-5xl"
+      : width === "narrow"
+        ? "mx-auto max-w-3xl"
+        : "mx-auto max-w-4xl";
+
+  return (
+    <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+      <div className={widthClass}>{children}</div>
+    </section>
+  );
+}
+
 export default function Home() {
   const {
     step,
@@ -273,70 +288,67 @@ export default function Home() {
   return (
     <Shell step={step}>
       {step === 1 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-          <div className="mx-auto max-w-4xl">
-            <div className="mb-7 text-right">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-(--blue-200) bg-(--blue-50) px-3 py-1 text-xs font-semibold tracking-wide text-(--blue-700)">
-                دراسة أكاديمية
-              </div>
-              <h1 className="text-[1.55rem] font-bold leading-snug text-(--text-strong) sm:text-[1.9rem] lg:text-[2.1rem]">
-                دراسة حول إدراك جودة الأخبار الرقمية
-              </h1>
+        <StepSection>
+          <div className="mb-7 text-right">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-(--blue-200) bg-(--blue-50) px-3 py-1 text-xs font-semibold tracking-wide text-(--blue-700)">
+              دراسة أكاديمية
             </div>
+            <h1 className="text-[1.55rem] font-bold leading-snug text-(--text-strong) sm:text-[1.9rem] lg:text-[2.1rem]">
+              دراسة حول إدراك جودة الأخبار الرقمية
+            </h1>
+          </div>
 
-            <div className="mb-6 space-y-4 text-right text-sm leading-8 text-(--text-body) sm:text-base">
-              <p>عزيزي الطالب / الطالبة:</p>
-              <p>
-                ندعوك للمشاركة في هذه الدراسة الأكاديمية التي تهدف إلى تقييم
-                جودة الأخبار الرقمية لدى طلبة الجامعات. ستستغرق التجربة حوالي{" "}
-                <strong>10 دقائق</strong>.
-              </p>
-              <p>
-                نؤكد لك أن جميع بياناتك ستعامل بسرية تامة وتستخدم لأغراض البحث
-                العلمي فقط. مشاركتك <strong>طوعية</strong> ويمكنك الانسحاب في أي
-                وقت.
-              </p>
-              <p>
-                نود أن نعرب لك عن خالص امتناننا لوقتك وجهدك في إتمام هذه
-                الدراسة.
-              </p>
-            </div>
+          <div className="mb-6 space-y-4 text-right text-sm leading-8 text-(--text-body) sm:text-base">
+            <p>عزيزي الطالب / الطالبة:</p>
+            <p>
+              ندعوك للمشاركة في هذه الدراسة الأكاديمية التي تهدف إلى تقييم جودة
+              الأخبار الرقمية لدى طلبة الجامعات. ستستغرق التجربة حوالي{" "}
+              <strong>10 دقائق</strong>.
+            </p>
+            <p>
+              نؤكد لك أن جميع بياناتك ستعامل بسرية تامة وتستخدم لأغراض البحث
+              العلمي فقط. مشاركتك <strong>طوعية</strong> ويمكنك الانسحاب في أي
+              وقت.
+            </p>
+            <p>
+              نود أن نعرب لك عن خالص امتناننا لوقتك وجهدك في إتمام هذه الدراسة.
+            </p>
+          </div>
 
-            <div className="border-t border-(--border) pt-6">
-              <FieldLabel required>هل توافق على المشاركة؟</FieldLabel>
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
-                {[
-                  {
-                    val: "yes",
-                    label: "نعم، أوافق على المشاركة",
-                    primary: true,
-                  },
-                  { val: "no", label: "لا، أرفض المشاركة", primary: false },
-                ].map(({ val, label, primary }) => {
-                  const selected = form.consent === val;
-                  return (
-                    <ConsentChoice
-                      key={val}
-                      selected={selected}
-                      primary={primary}
-                      label={label}
-                      onClick={() => updateField("consent", val)}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-
-            <ErrorNotice message={error} />
-            <div className="mt-6 flex justify-start">
-              <PrimaryButton onClick={next}>ابدأ الاستبيان</PrimaryButton>
+          <div className="border-t border-(--border) pt-6">
+            <FieldLabel required>هل توافق على المشاركة؟</FieldLabel>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
+              {[
+                {
+                  val: "yes",
+                  label: "نعم، أوافق على المشاركة",
+                  primary: true,
+                },
+                { val: "no", label: "لا، أرفض المشاركة", primary: false },
+              ].map(({ val, label, primary }) => {
+                const selected = form.consent === val;
+                return (
+                  <ConsentChoice
+                    key={val}
+                    selected={selected}
+                    primary={primary}
+                    label={label}
+                    onClick={() => updateField("consent", val)}
+                  />
+                );
+              })}
             </div>
           </div>
-        </section>
+
+          <ErrorNotice message={error} />
+          <div className="mt-6 flex justify-start">
+            <PrimaryButton onClick={next}>ابدأ الاستبيان</PrimaryButton>
+          </div>
+        </StepSection>
       )}
 
       {step === 2 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <StepSection>
           <SectionHeading
             eyebrow="الخطوة 1"
             title="البيانات الديموغرافية والتقنية"
@@ -424,11 +436,11 @@ export default function Home() {
             step={step}
             prevDisabled={step === 1}
           />
-        </section>
+        </StepSection>
       )}
 
       {step === 3 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <StepSection width="narrow">
           <SectionHeading eyebrow="الخطوة 2" title="تعليمات القراءة" />
 
           <div className="card-soft border-(--warning-border) bg-(--warning-bg) p-5 sm:p-6">
@@ -450,11 +462,11 @@ export default function Home() {
           <div className="mt-8 flex justify-start">
             <PrimaryButton onClick={next}>ابدأ التجربة</PrimaryButton>
           </div>
-        </section>
+        </StepSection>
       )}
 
       {step === 4 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <StepSection width="wide">
           <ArticleBlock
             title={articleTitle}
             category={articleCategory}
@@ -477,13 +489,13 @@ export default function Home() {
             step={step}
             prevDisabled={false}
           />
-        </section>
+        </StepSection>
       )}
 
       {step === 5 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-          <div className="overflow-hidden rounded-[14px] border border-(--warning-border) bg-white shadow-(--shadow-sm)">
-            <div className="bg-[linear-gradient(135deg,#fff6e8,#f7ebd4)] px-5 py-4 text-center sm:px-6">
+        <StepSection width="narrow">
+          <div className="overflow-hidden rounded-md border border-(--warning-border) bg-white shadow-(--shadow-sm)">
+            <div className="bg-[linear-gradient(135deg,#fff7ea,#f8ecd7)] px-5 py-4 text-center sm:px-6">
               <FiAlertTriangle
                 className="mx-auto text-4xl text-(--amber-700)"
                 aria-hidden="true"
@@ -508,11 +520,11 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </StepSection>
       )}
 
       {step === 6 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <StepSection width="wide">
           <ArticleBlock
             title={articleTitle}
             category={articleCategory}
@@ -535,11 +547,11 @@ export default function Home() {
             step={step}
             prevDisabled={false}
           />
-        </section>
+        </StepSection>
       )}
 
       {step === 7 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <StepSection width="wide">
           <SectionHeading
             eyebrow="الخطوة 5"
             title="قياس الثقة في المصدر"
@@ -564,11 +576,11 @@ export default function Home() {
             step={step}
             prevDisabled={false}
           />
-        </section>
+        </StepSection>
       )}
 
       {step === 8 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <StepSection width="wide">
           <SectionHeading
             eyebrow="الخطوة 6"
             title="مقياس الاستدلال الآلي"
@@ -593,11 +605,11 @@ export default function Home() {
             step={step}
             prevDisabled={false}
           />
-        </section>
+        </StepSection>
       )}
 
       {step === 9 && (
-        <section className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <StepSection>
           <SectionHeading eyebrow="الخطوة 7" title="ما بعد التجربة" />
 
           <div className="space-y-8">
@@ -668,7 +680,7 @@ export default function Home() {
             step={step}
             prevDisabled={false}
           />
-        </section>
+        </StepSection>
       )}
     </Shell>
   );

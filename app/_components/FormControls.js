@@ -207,8 +207,8 @@ export function ArticleBlock({
       <div className="flex items-center justify-between gap-4 border-b border-(--border) bg-[linear-gradient(135deg,#f8fbff,#eef6fd)] px-4 py-3.5 sm:px-6">
         <span className="text-xs font-semibold text-(--text-muted) sm:text-sm">
           {showReminder
-            ? "التقييم البعدي — الخبر 1 من 3"
-            : "التقييم القبلي — الخبر 1 من 3"}
+            ? "التقييم البعدي — الخبر 1 من 1"
+            : "التقييم القبلي — الخبر 1 من 1"}
         </span>
 
         <span className="rounded-md border border-(--blue-200) bg-white px-3 py-1 text-xs font-semibold text-(--blue-700)">
