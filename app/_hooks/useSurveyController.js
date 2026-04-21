@@ -1,5 +1,19 @@
 import { useMemo, useState } from "react";
 
+const LIKERT_LABELS = {
+  1: "معارض بشدة",
+  2: "معارض",
+  3: "محايد",
+  4: "موافق",
+  5: "موافق بشدة",
+};
+
+function normalizeDigits(value) {
+  return String(value ?? "")
+    .replace(/[\u0660-\u0669]/g, (char) => String(char.charCodeAt(0) - 0x0660))
+    .replace(/[\u06F0-\u06F9]/g, (char) => String(char.charCodeAt(0) - 0x06f0));
+}
+
 export function useSurveyController({
   totalSteps,
   disclosureText,
@@ -8,9 +22,21 @@ export function useSurveyController({
   sourceTrustQuestions,
   aiReasoningQuestions,
 }) {
+  const likertKeys = useMemo(
+    () =>
+      [
+        ...preQuestions,
+        ...postQuestions,
+        ...sourceTrustQuestions,
+        ...aiReasoningQuestions,
+      ].map((question) => question.key),
+    [preQuestions, postQuestions, sourceTrustQuestions, aiReasoningQuestions],
+  );
+
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     consent: "",
     gender: "",
@@ -79,9 +105,11 @@ export function useSurveyController({
     }
 
     if (step === 2) {
+      const normalizedAge = normalizeDigits(form.age.trim());
+
       if (
         !form.gender ||
-        !form.age.trim() ||
+        !normalizedAge ||
         !form.level ||
         !form.specialization ||
         !form.internetUsage ||
@@ -91,6 +119,12 @@ export function useSurveyController({
         setError("يرجى تعبئة جميع البيانات المطلوبة.");
         return false;
       }
+
+      if (!/^\d+$/.test(normalizedAge)) {
+        setError("يرجى إدخال السن بالأرقام فقط.");
+        return false;
+      }
+
       return true;
     }
 
@@ -148,10 +182,53 @@ export function useSurveyController({
   };
 
   const submit = () => {
-    if (!validateStep()) return false;
-    console.log("PAYLOAD", payload);
-    setError("");
-    setStep(10);
+    if (!validateStep() || isSubmitting) return false;
+
+    const run = async () => {
+      setIsSubmitting(true);
+      setError("");
+
+      try {
+        const normalizedAge = normalizeDigits(form.age.trim());
+        const formWithLikertText = {
+          ...form,
+          age: normalizedAge,
+        };
+
+        for (const key of likertKeys) {
+          formWithLikertText[key] = LIKERT_LABELS[form[key]] || form[key];
+        }
+
+        const submissionData = {
+          ...formWithLikertText,
+          feelings,
+          disclosure: disclosureText,
+          completed: true,
+          submitted_at: new Date().toISOString(),
+        };
+
+        const res = await fetch("/api/survey-submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(submissionData),
+        });
+
+        if (!res.ok) {
+          throw new Error("Submission failed");
+        }
+
+        setSubmitted(true);
+        setStep(10);
+      } catch {
+        setError("تعذر إرسال الاستبيان حالياً. يرجى المحاولة مرة أخرى.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    void run();
     return true;
   };
 
@@ -161,6 +238,7 @@ export function useSurveyController({
     error,
     setError,
     submitted,
+    isSubmitting,
     form,
     feelings,
     attentionFlag,

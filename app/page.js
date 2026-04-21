@@ -170,6 +170,7 @@ export default function Home() {
   const {
     step,
     submitted,
+    isSubmitting,
     form,
     feelings,
     attentionFlag,
@@ -424,8 +425,19 @@ export default function Home() {
               <FieldLabel required>السن</FieldLabel>
               <TextField
                 value={form.age}
-                onChange={(e) => updateField("age", e.target.value)}
+                onChange={(e) =>
+                  updateField(
+                    "age",
+                    e.target.value.replace(
+                      /[^\d\u0660-\u0669\u06F0-\u06F9]/g,
+                      "",
+                    ),
+                  )
+                }
                 placeholder="أدخل العمر بالأرقام"
+                inputMode="numeric"
+                pattern="[0-9\u0660-\u0669\u06F0-\u06F9]*"
+                maxLength={3}
               />
             </div>
 
@@ -778,6 +790,7 @@ export default function Home() {
             onSubmit={submit}
             step={step}
             prevDisabled={false}
+            isSubmitting={isSubmitting}
           />
         </StepSection>
       )}

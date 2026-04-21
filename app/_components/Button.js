@@ -88,22 +88,32 @@ export function DangerButton(props) {
    ACTION ROW
 ================================= */
 
-export function ActionRow({ onPrev, onNext, onSubmit, step, prevDisabled }) {
+export function ActionRow({
+  onPrev,
+  onNext,
+  onSubmit,
+  step,
+  prevDisabled,
+  isSubmitting = false,
+}) {
   return (
     <div className="mt-8 border-t border-(--border) pt-5 sm:mt-10 sm:pt-6">
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <SecondaryButton onClick={onPrev} disabled={prevDisabled}>
+        <SecondaryButton
+          onClick={onPrev}
+          disabled={prevDisabled || isSubmitting}
+        >
           <FiArrowRight />
           <span>السابق</span>
         </SecondaryButton>
 
         {onSubmit ? (
-          <PrimaryButton onClick={onSubmit}>
+          <PrimaryButton onClick={onSubmit} disabled={isSubmitting}>
             <FiCheck />
-            <span>إنهاء وإرسال</span>
+            <span>{isSubmitting ? "جارٍ الإرسال..." : "إنهاء وإرسال"}</span>
           </PrimaryButton>
         ) : (
-          <PrimaryButton onClick={onNext}>
+          <PrimaryButton onClick={onNext} disabled={isSubmitting}>
             <span>{step === 4 ? "الخبر التالي" : "التالي"}</span>
             <FiArrowLeft />
           </PrimaryButton>

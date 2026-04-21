@@ -317,13 +317,14 @@ export function ErrorNotice({ message }) {
   );
 }
 
-export function TextField({ value, onChange, placeholder }) {
+export function TextField({ value, onChange, placeholder, ...props }) {
   return (
     <input
       type="text"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      {...props}
       className={cn(
         "field min-h-11 rounded-md border px-4 py-3 text-sm transition-all duration-200 sm:text-base",
         "focus:ring-2 focus:ring-(--blue-200) focus:ring-offset-1",
