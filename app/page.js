@@ -180,16 +180,24 @@ export default function Home() {
   if (submitted && form.consent === "no") {
     return (
       <Shell showProgress={false}>
-        <div className="px-4 py-16 text-center sm:py-20">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-(--blue-200) bg-(--blue-50) text-(--blue-700)">
-            <FiLogOut className="text-3xl" aria-hidden="true" />
+        <div className="px-4 py-20 sm:py-24">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[linear-gradient(180deg,var(--blue-50),#ffffff)] text-(--blue-700) shadow-[var(--shadow-xs)] ring-1 ring-(--blue-200)">
+              <FiLogOut className="text-[1.8rem]" aria-hidden="true" />
+            </div>
+
+            <span className="mb-3 inline-flex rounded-full bg-(--blue-50) px-3 py-1 text-xs font-semibold text-(--blue-700)">
+              المشاركة غير مكتملة
+            </span>
+
+            <h1 className="mt-3 mb-3 text-[1.8rem] font-bold leading-tight text-(--text-strong) sm:text-[2.2rem]">
+              شكراً لاهتمامك
+            </h1>
+
+            <p className="mx-auto max-w-[34rem] text-sm leading-8 text-(--text-muted) sm:text-[1.02rem]">
+              تم إنهاء الاستبيان لأن المشاركة تتطلب الموافقة الطوعية المسبقة.
+            </p>
           </div>
-          <h1 className="mb-3 text-2xl font-bold text-(--text-strong) sm:text-3xl">
-            شكراً لاهتمامك
-          </h1>
-          <p className="mx-auto max-w-md text-sm leading-8 text-(--text-muted) sm:text-base">
-            تم إنهاء الاستبيان لأن المشاركة تتطلب الموافقة الطوعية المسبقة.
-          </p>
         </div>
       </Shell>
     );
@@ -198,21 +206,29 @@ export default function Home() {
   if (step === 10) {
     return (
       <Shell showProgress={false}>
-        <StepSection>
-          <div className="mx-auto max-w-4xl text-right">
-            <div className="mb-10 text-center">
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-(--blue-200) bg-(--success-bg) text-(--success) shadow-[0_0_0_8px_rgba(47,133,90,0.07)]">
-                <FiCheckCircle className="text-3xl" aria-hidden="true" />
+        <StepSection width="narrow">
+          <div className="mx-auto max-w-3xl text-right">
+            {/* Header */}
+            <div className="mb-12 text-center">
+              <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[linear-gradient(180deg,#ffffff,var(--success-bg))] text-(--success) ring-1 ring-[rgba(47,133,90,0.16)] shadow-[0_10px_24px_rgba(47,133,90,0.10)]">
+                <FiCheckCircle className="text-[1.9rem]" aria-hidden="true" />
               </div>
-              <h1 className="text-2xl font-bold text-(--success) sm:text-3xl">
+
+              <span className="inline-flex rounded-full bg-(--success-bg) px-3 py-1 text-xs font-semibold text-(--success)">
+                تم الإرسال بنجاح
+              </span>
+
+              <h1 className="mt-4 text-[1.9rem] font-bold leading-tight text-(--text-strong) sm:text-[2.3rem]">
                 شكراً لك على مشاركتك!
               </h1>
-              <p className="mt-2 text-sm text-(--text-muted) sm:text-base">
+
+              <p className="mt-3 text-sm leading-8 text-(--text-muted) sm:text-[1.02rem]">
                 لقد أتممت الدراسة بنجاح
               </p>
             </div>
 
-            <div className="space-y-6">
+            {/* Intro */}
+            <div className="space-y-5">
               <p className="text-sm font-semibold text-(--blue-900) sm:text-base">
                 عزيزي الطالب / المشارك،
               </p>
@@ -223,11 +239,13 @@ export default function Home() {
                 الجمهور مع تكنولوجيا الذكاء الاصطناعي في المجال الإعلامي.
               </p>
 
-              <div className="rounded-md bg-(--blue-50) px-5 py-5">
+              {/* Debriefing */}
+              <div className="rounded-md border border-(--blue-200) bg-[linear-gradient(180deg,#ffffff,var(--blue-50))] px-5 py-5 shadow-[var(--shadow-xs)]">
                 <h2 className="mb-3 text-right text-base font-bold text-(--blue-800) sm:text-lg">
                   توضيح هام حول طبيعة الدراسة (Debriefing)
                 </h2>
-                <p className="text-right text-sm leading-8 text-(--blue-900) sm:text-base">
+
+                <p className="text-right text-sm leading-8 text-(--text-body) sm:text-base">
                   نود إعلامك بأن «الإخفاء المؤقت» لهوية مصادر الأخبار في بداية
                   التجربة كان ضرورة منهجية بحثية، وذلك لضمان الحصول على تقييمك
                   العفوي للمحتوى دون تأثير مسبق بنوع المصدر. الهدف هو قياس
@@ -235,56 +253,65 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <p className="text-sm font-semibold text-(--text-strong) sm:text-base">
+              {/* Guarantees */}
+              <div className="pt-2">
+                <p className="mb-4 text-sm font-semibold text-(--text-strong) sm:text-base">
                   نؤكد لك ما يلي:
                 </p>
 
-                {[
-                  {
-                    icon: FiShield,
-                    bold: "الخصوصية:",
-                    text: "كافة البيانات التي قدمتها مشفرة، وتُستخدم لأغراض البحث العلمي فقط.",
-                  },
-                  {
-                    icon: FiFileText,
-                    bold: "الأخبار المستخدمة:",
-                    text: "جميع النصوص خضعت للتحكيم لضمان جودتها.",
-                  },
-                  {
-                    icon: FiLogOut,
-                    bold: "حق الانسحاب:",
-                    text: "يمكنك التواصل معنا عبر إيميل الباحث لطلب حذف استجابتك.",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.bold}
-                    className="flex items-start gap-3 px-1 py-1"
-                  >
-                    <item.icon
-                      className="mt-1 shrink-0 text-base text-(--blue-700)"
-                      aria-hidden="true"
-                    />
-                    <p className="flex-1 text-right text-sm leading-7 text-(--text-body) sm:text-base">
-                      <strong className="text-(--text-strong)">
-                        {item.bold}
-                      </strong>{" "}
-                      {item.text}
-                    </p>
-                  </div>
-                ))}
+                <div className="space-y-3">
+                  {[
+                    {
+                      icon: FiShield,
+                      bold: "الخصوصية:",
+                      text: "كافة البيانات التي قدمتها مشفرة، وتُستخدم لأغراض البحث العلمي فقط.",
+                    },
+                    {
+                      icon: FiFileText,
+                      bold: "الأخبار المستخدمة:",
+                      text: "جميع النصوص خضعت للتحكيم لضمان جودتها.",
+                    },
+                    {
+                      icon: FiLogOut,
+                      bold: "حق الانسحاب:",
+                      text: "يمكنك التواصل معنا عبر إيميل الباحث لطلب حذف استجابتك.",
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.bold}
+                      className="flex items-start gap-3 rounded-md bg-white px-4 py-3 shadow-[var(--shadow-xs)] ring-1 ring-(--border)"
+                    >
+                      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--blue-50) text-(--blue-700)">
+                        <item.icon className="text-[1rem]" aria-hidden="true" />
+                      </div>
+
+                      <p className="flex-1 text-right text-sm leading-7 text-(--text-body) sm:text-base">
+                        <strong className="text-(--text-strong)">
+                          {item.bold}
+                        </strong>{" "}
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <SoftDivider />
+              {/* Footer */}
+              <div className="pt-4">
+                <div className="mx-auto mb-4 h-px w-24 bg-(--border)" />
 
-              <div className="text-center text-sm text-(--text-muted)">
-                <p className="font-semibold">الطالب الباحث: نحال جيـلالي</p>
-                <p>إشراف: الدكتور الهاشمي بيدوش</p>
-                <p>جامعة البليدة 2</p>
+                <div className="text-center text-sm leading-7 text-(--text-muted)">
+                  <p className="font-semibold text-(--text-strong)">
+                    الطالب الباحث: نحال جيـلالي
+                  </p>
+                  <p>إشراف: الدكتور الهاشمي بيدوش</p>
+                  <p>جامعة البليدة 2</p>
+                </div>
               </div>
 
+              {/* Optional internal note */}
               {attentionFlag && (
-                <div className="rounded-md border border-(--error-border) bg-(--error-bg) px-4 py-3 text-right text-sm text-(--error)">
+                <div className="mt-6 rounded-md border border-(--error-border) bg-(--error-bg) px-4 py-3 text-right text-sm leading-7 text-(--error)">
                   ملاحظة داخلية: تم تسجيل مخالفة في سؤال الانتباه.
                 </div>
               )}
@@ -518,34 +545,50 @@ export default function Home() {
 
       {step === 5 && (
         <StepSection width="narrow">
-          <div className="rounded-md bg-white px-0 py-0">
-            <div className="px-5 py-4 text-center sm:px-6">
-              <FiAlertTriangle
-                className="mx-auto text-4xl text-(--amber-700)"
-                aria-hidden="true"
-              />
-            </div>
+          <div className="mx-auto max-w-3xl">
+            <div className="overflow-hidden rounded-md border border-(--warning-border) bg-white shadow-[var(--shadow-sm)]">
+              {/* top accent */}
+              <div className="h-1.5 bg-[linear-gradient(90deg,var(--amber-700),#d7a24a)]" />
 
-            <div className="px-2 py-2 sm:px-4 sm:py-3">
-              <h2 className="mb-4 text-center text-xl font-bold text-(--amber-700) sm:text-2xl">
-                تنبيه هام
-              </h2>
+              <div className="px-5 py-6 text-center sm:px-8 sm:py-8">
+                {/* icon */}
+                <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-(--warning-bg) text-(--amber-700)">
+                  <FiAlertTriangle
+                    className="text-[1.6rem]"
+                    aria-hidden="true"
+                  />
+                </div>
 
-              <p className="mb-4 text-center text-sm font-semibold text-(--text-strong) sm:text-base">
-                الأخبار التي قرأتها أنتجها:
-              </p>
+                {/* title */}
+                <h2 className="mb-3 text-center text-[1.35rem] font-bold text-(--amber-700) sm:text-[1.7rem]">
+                  تنبيه هام
+                </h2>
 
-              <div className="mx-auto mb-6 max-w-lg rounded-md bg-(--warning-bg) px-4 py-4 text-center text-base font-semibold leading-7 text-(--text-strong)">
-                {disclosureText}
-              </div>
+                {/* intro */}
+                <p className="mb-3 text-center text-sm font-semibold text-(--text-strong) sm:text-base">
+                  الأخبار التي قرأتها تم إنتاجها بواسطة:
+                </p>
 
-              <p className="mb-6 text-center text-sm leading-7 text-(--text-muted) sm:text-base">
-                سنقوم الآن بإعادة عرض الخبر عليك لتقييمه مجدداً في ضوء هذه
-                المعلومة.
-              </p>
+                {/* disclosure */}
+                <div className="mx-auto mb-5 max-w-xl rounded-md border border-(--warning-border) bg-(--warning-bg) px-4 py-4 text-center shadow-[var(--shadow-xs)]">
+                  <p className="text-base font-bold leading-8 text-(--text-strong) sm:text-[1.05rem]">
+                    {disclosureText}
+                  </p>
+                </div>
 
-              <div className="flex justify-center">
-                <DangerButton onClick={next}>متابعة التقييم</DangerButton>
+                {/* explanation */}
+                <p className="mx-auto mb-7 max-w-[46ch] text-center text-sm leading-8 text-(--text-muted) sm:text-base">
+                  سنعرض الخبر مرة أخرى، ثم نطلب منك إعادة التقييم بعد معرفة
+                  طبيعة المصدر، حتى نقارن بين الانطباع الأول والانطباع بعد
+                  الإفصاح.
+                </p>
+
+                {/* action */}
+                <div className="flex justify-center">
+                  <DangerButton onClick={next} className="min-w-[180px]">
+                    متابعة التقييم
+                  </DangerButton>
+                </div>
               </div>
             </div>
           </div>
