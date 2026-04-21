@@ -10,6 +10,59 @@ function cn(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const likertTones = [
+  {
+    border: "border-(--likert-red-300)",
+    hoverBorder: "hover:border-(--likert-red-400)",
+    hoverBg: "hover:bg-(--likert-red-50)",
+    selectedBorder: "border-(--likert-red-600)",
+    selectedBg: "bg-(--likert-red-50)",
+    selectedText: "text-(--likert-red-900)",
+    bar: "bg-(--likert-red-600)",
+    shadow: "0 0 0 1px rgba(225,92,84,0.12)",
+  },
+  {
+    border: "border-(--likert-orange-300)",
+    hoverBorder: "hover:border-(--likert-orange-400)",
+    hoverBg: "hover:bg-(--likert-orange-50)",
+    selectedBorder: "border-(--likert-orange-600)",
+    selectedBg: "bg-(--likert-orange-50)",
+    selectedText: "text-(--likert-orange-900)",
+    bar: "bg-(--likert-orange-600)",
+    shadow: "0 0 0 1px rgba(241,145,56,0.12)",
+  },
+  {
+    border: "border-(--likert-blue-300)",
+    hoverBorder: "hover:border-(--likert-blue-400)",
+    hoverBg: "hover:bg-(--likert-blue-50)",
+    selectedBorder: "border-(--likert-blue-600)",
+    selectedBg: "bg-(--likert-blue-50)",
+    selectedText: "text-(--likert-blue-900)",
+    bar: "bg-(--likert-blue-600)",
+    shadow: "0 0 0 1px rgba(74,134,198,0.12)",
+  },
+  {
+    border: "border-(--likert-green-soft-300)",
+    hoverBorder: "hover:border-(--likert-green-soft-400)",
+    hoverBg: "hover:bg-(--likert-green-soft-50)",
+    selectedBorder: "border-(--likert-green-soft-600)",
+    selectedBg: "bg-(--likert-green-soft-50)",
+    selectedText: "text-(--likert-green-soft-900)",
+    bar: "bg-(--likert-green-soft-600)",
+    shadow: "0 0 0 1px rgba(94,183,129,0.12)",
+  },
+  {
+    border: "border-(--likert-green-300)",
+    hoverBorder: "hover:border-(--likert-green-400)",
+    hoverBg: "hover:bg-(--likert-green-50)",
+    selectedBorder: "border-(--likert-green-600)",
+    selectedBg: "bg-(--likert-green-50)",
+    selectedText: "text-(--likert-green-900)",
+    bar: "bg-(--likert-green-600)",
+    shadow: "0 0 0 1px rgba(47,133,90,0.12)",
+  },
+];
+
 export function RadioGroup({ name, value, onChange, options, columns = 1 }) {
   const colsClass =
     columns === 2
@@ -103,21 +156,23 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
         {(labels || []).map((label, index) => {
           const optVal = String(index + 1);
           const selected = value === optVal;
+          const tone = likertTones[index] ?? likertTones[2];
 
           return (
             <label
               key={optVal}
               className={cn(
-                "flex min-h-[72px] cursor-pointer items-center justify-center rounded-md border px-4 py-3 text-center transition-all duration-200",
-                "hover:border-(--blue-300) hover:bg-(--blue-50)",
-                "focus-within:ring-2 focus-within:ring-(--blue-200) focus-within:ring-offset-1",
+                "relative flex min-h-18 overflow-hidden cursor-pointer items-center justify-center rounded-md border px-4 py-3 text-center transition-all duration-200",
+                tone.hoverBorder,
+                tone.hoverBg,
+                "focus-within:ring-2 focus-within:ring-offset-1",
                 selected
-                  ? "border-(--blue-600) bg-(--blue-50)"
-                  : "border-(--border) bg-white",
+                  ? cn(tone.selectedBorder, tone.selectedBg)
+                  : cn(tone.border, "bg-white"),
               )}
               style={{
                 boxShadow: selected
-                  ? "0 0 0 1px rgba(74,134,198,0.10)"
+                  ? tone.shadow
                   : "none",
               }}
             >
@@ -134,12 +189,19 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
                 className={cn(
                   "text-sm leading-7 sm:text-[0.94rem]",
                   selected
-                    ? "font-bold text-(--blue-900)"
+                    ? cn("font-bold", tone.selectedText)
                     : "font-semibold text-(--text-body)",
                 )}
               >
                 {label}
               </span>
+
+              <span
+                className={cn(
+                  "pointer-events-none absolute inset-y-0 right-0 w-1 rounded-l-md transition-all duration-200",
+                  selected ? cn(tone.bar, "opacity-100") : "opacity-0",
+                )}
+              />
             </label>
           );
         })}
@@ -219,7 +281,7 @@ export function ArticleBlock({
 
         {/* Title */}
         <header className="mb-6">
-          <div className="mb-3 h-[3px] w-14 rounded-full bg-(--blue-500)" />
+          <div className="mb-3 h-0.75 w-14 rounded-full bg-(--blue-500)" />
           <h3 className="text-right text-[1.3rem] font-bold leading-[1.9] text-(--text-strong) sm:text-[1.8rem] sm:leading-[2.3rem]">
             {title}
           </h3>
@@ -307,7 +369,7 @@ export function ErrorNotice({ message }) {
   if (!message) return null;
 
   return (
-    <div className="mt-6 flex items-start gap-3 rounded-md border border-(--error-border) bg-(--error-bg) px-4 py-3.5 text-right text-sm text-(--error) shadow-[var(--shadow-xs)] sm:text-base">
+    <div className="mt-6 flex items-start gap-3 rounded-md border border-(--error-border) bg-(--error-bg) px-4 py-3.5 text-right text-sm text-(--error) shadow-(--shadow-xs) sm:text-base">
       <FiAlertTriangle
         className="mt-0.5 shrink-0 text-base"
         aria-hidden="true"

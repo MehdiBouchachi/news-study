@@ -28,6 +28,37 @@
   --blue-100: #edf6fd;
   --blue-50: #f6fbff;
 
+  /* Likert tones */
+  --likert-red-900: #8f2f29;
+  --likert-red-600: #e15c54;
+  --likert-red-400: #ee8b84;
+  --likert-red-300: #f4beb9;
+  --likert-red-50: #fff4f2;
+
+  --likert-orange-900: #95561f;
+  --likert-orange-600: #f19138;
+  --likert-orange-400: #f5b36f;
+  --likert-orange-300: #f8d0a8;
+  --likert-orange-50: #fff8ef;
+
+  --likert-blue-900: #1f3c5b;
+  --likert-blue-600: #4a86c6;
+  --likert-blue-400: #8fc1eb;
+  --likert-blue-300: #bcd8f5;
+  --likert-blue-50: #f6fbff;
+
+  --likert-green-soft-900: #2d6f50;
+  --likert-green-soft-600: #5eb781;
+  --likert-green-soft-400: #8bd0a4;
+  --likert-green-soft-300: #bce5ca;
+  --likert-green-soft-50: #effaf3;
+
+  --likert-green-900: #1f5f43;
+  --likert-green-600: #2f855a;
+  --likert-green-400: #66b889;
+  --likert-green-300: #a6d9ba;
+  --likert-green-50: #eefaf2;
+
   /* Accent (soft, not aggressive) */
   --teal-600: #2f9da5;
   --teal-100: #e6f7f8;
