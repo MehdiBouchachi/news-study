@@ -199,78 +199,58 @@ export function ArticleBlock({
   disclosureText,
 }) {
   return (
-    <article className="mb-6 overflow-hidden rounded-[18px] border border-(--border) bg-white shadow-[0_18px_40px_rgba(20,40,70,0.07)] sm:mb-7">
-      <div className="border-b border-(--border) bg-[linear-gradient(135deg,#f7fbff,#edf6fd)] px-4 py-4 sm:px-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <article className="mb-8 rounded-md bg-white px-4 py-5 sm:px-6 sm:py-7">
+      <div className="mx-auto max-w-[78ch]">
+        {/* Top meta */}
+        <div className="mb-5 flex flex-col gap-3 border-b border-(--border) pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-(--blue-200) bg-white px-3 py-1 text-xs font-semibold text-(--blue-700) shadow-[var(--shadow-xs)]">
-              <FiBookOpen className="text-[0.8rem]" aria-hidden="true" />
-              <span>الخبر الرئيسي</span>
+            <span className="inline-flex items-center rounded-full bg-(--blue-50) px-3 py-1 text-xs font-semibold text-(--blue-700)">
+              {category}
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-white px-3 py-1 text-xs font-semibold text-(--text-muted)">
-              <FiClock className="text-[0.8rem]" aria-hidden="true" />
-              <span>{showReminder ? "إعادة القراءة" : "قراءة أولية"}</span>
+
+            <span className="text-xs font-medium text-(--text-muted) sm:text-sm">
+              {showReminder ? "إعادة القراءة" : "قراءة أولية"}
             </span>
           </div>
 
-          <span className="rounded-full border border-(--blue-200) bg-white px-3 py-1 text-xs font-semibold text-(--blue-700)">
-            {category}
-          </span>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between gap-3 rounded-[14px] border border-(--blue-100) bg-white/80 px-4 py-3">
-          <span className="text-xs font-semibold text-(--text-muted) sm:text-sm">
+          <span className="text-xs font-medium text-(--text-faint) sm:text-sm">
             {showReminder
-              ? "التقييم البعدي — خبر واحد فقط"
-              : "التقييم القبلي — خبر واحد فقط"}
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-(--blue-50) px-3 py-1 text-xs font-semibold text-(--blue-700)">
-            <FiInfo className="text-[0.8rem]" aria-hidden="true" />
-            <span>اقرأ بعناية</span>
+              ? "التقييم البعدي — خبر واحد"
+              : "التقييم القبلي — خبر واحد"}
           </span>
         </div>
-      </div>
 
-      {showReminder && (
-        <div className="flex items-start gap-3 border-b border-(--warning-border) bg-(--warning-bg) px-4 py-3 sm:px-6">
-          <FiAlertTriangle
-            className="mt-0.5 shrink-0 text-base text-(--warning)"
-            aria-hidden="true"
-          />
-          <p className="text-right text-xs leading-7 text-(--warning) sm:text-sm">
-            <span className="font-semibold">تنبيه:</span> المصدر هو{" "}
-            {disclosureText}
-          </p>
-        </div>
-      )}
-
-      <div className="px-4 py-6 sm:px-6 sm:py-7">
-        <div className="mx-auto max-w-[76ch]">
-          <div className="mb-5 border-r-[4px] border-(--blue-500) pr-4">
-            <h3 className="text-right text-xl font-bold leading-[1.8] text-(--text-strong) sm:text-[2rem] sm:leading-[2.2rem]">
-              {title}
-            </h3>
-            <p className="mt-2 text-right text-sm leading-7 text-(--text-muted) sm:text-base">
-              هذا النص هو المادة الأساسية التي ستقيّمها في هذه الجولة، مع الحفاظ
-              على نفس المضمون في القراءة الأولى والبعدية.
+        {/* Reminder */}
+        {showReminder && (
+          <div className="mb-5 rounded-md border border-(--warning-border) bg-(--warning-bg) px-4 py-3">
+            <p className="text-right text-sm leading-7 text-(--warning) sm:text-[0.95rem]">
+              <span className="font-semibold">تنبيه:</span> المصدر هو{" "}
+              {disclosureText}
             </p>
           </div>
+        )}
 
-          <div className="rounded-[16px] bg-[linear-gradient(180deg,#ffffff,#f9fcff)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:p-5">
-            <div className="space-y-5">
-              {paragraphs.map((paragraph, index) => (
-                <p
-                  key={index}
-                  className={cn(
-                    "text-right text-[0.98rem] leading-9 text-(--text-body) sm:text-[1.04rem]",
-                    index === 0 && "font-medium text-(--text-strong)",
-                  )}
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </div>
+        {/* Title */}
+        <header className="mb-6">
+          <div className="mb-3 h-[3px] w-14 rounded-full bg-(--blue-500)" />
+          <h3 className="text-right text-[1.3rem] font-bold leading-[1.9] text-(--text-strong) sm:text-[1.8rem] sm:leading-[2.3rem]">
+            {title}
+          </h3>
+        </header>
+
+        {/* Body */}
+        <div className="space-y-5">
+          {paragraphs.map((paragraph, index) => (
+            <p
+              key={index}
+              className={cn(
+                "text-right text-[1rem] leading-9 text-(--text-body) sm:text-[1.06rem] sm:leading-10",
+                index === 0 && "text-(--text-strong)",
+              )}
+            >
+              {paragraph}
+            </p>
+          ))}
         </div>
       </div>
     </article>
