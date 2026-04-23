@@ -454,13 +454,7 @@ export default function Home() {
 
           {isAssigningClassification && (
             <div className="mt-4 rounded-md border border-(--blue-200) bg-(--blue-50) px-4 py-3 text-right text-sm text-(--blue-700)">
-              جارٍ تحديد تصنيف المشارك...
-            </div>
-          )}
-
-          {!isAssigningClassification && classificationCode && (
-            <div className="mt-4 rounded-md border border-(--success-border) bg-(--success-bg) px-4 py-3 text-right text-sm text-(--success)">
-              تم تعيينك تلقائياً إلى المجموعة: {classificationCode}
+              جارٍ تجهيز الاستبيان...
             </div>
           )}
 
