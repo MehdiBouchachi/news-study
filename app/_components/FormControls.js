@@ -171,9 +171,7 @@ export function LikertCard({ name, text, value, onChange, labels = [] }) {
                   : cn(tone.border, "bg-white"),
               )}
               style={{
-                boxShadow: selected
-                  ? tone.shadow
-                  : "none",
+                boxShadow: selected ? tone.shadow : "none",
               }}
             >
               <input

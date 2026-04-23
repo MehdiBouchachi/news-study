@@ -28,7 +28,7 @@ import {
 import { useSurveyController } from "./_hooks/useSurveyController";
 import { useStepScroll } from "./_hooks/useStepScroll";
 
-const TOTAL_STEPS = 10;
+const TOTAL_STEPS = 11;
 
 const articleTitle =
   "لقاح جديد يظهر كفاءة بنسبة 94% في الوقاية من سلالات كورونا المتحورة";
@@ -43,64 +43,91 @@ const articleParagraphs = [
 ];
 
 const preQuestions = [
-  { key: "pre_accuracy", text: "معلومات الخبر دقيقة وموثوقة" },
-  { key: "pre_objective", text: "الخبر يتسم بالموضوعية والحياد" },
-  { key: "pre_share", text: "سأقوم بمشاركة هذا الخبر" },
+  { key: "pre_q7", text: "المعلومات في الخبر صحيحة ومدعومة" },
+  { key: "pre_q8", text: "الخبر متوازن وخالٍ من التحيز" },
+  { key: "pre_q9", text: "الخبر يغطي الجوانب الرئيسية للموضوع" },
+  { key: "pre_q10", text: "الخبر مفيد ويوفر معلومات قيمة" },
+  { key: "pre_q11", text: "سأشارك هذا الخبر على وسائل التواصل" },
+  { key: "pre_q12", text: "سأوصي بهذا الخبر لأصدقائي" },
+  { key: "pre_q13", text: "سأعتمد عليه كمصدر معلومات" },
 ];
 
-const postQuestions = [
-  { key: "post_accuracy", text: "معلومات الخبر دقيقة وموثوقة" },
-  { key: "post_objective", text: "الخبر يتسم بالموضوعية والحياد" },
-  { key: "post_share", text: "سأقوم بمشاركة هذا الخبر" },
-];
-
-const sourceTrustQuestions = [
+const postCredibilityQuestions = [
   {
-    key: "trust_competence_1",
-    text: "الكفاءة: أعتقد أن هذا المصدر يمتلك المهارات اللازمة لإنتاج أخبار دقيقة.",
+    key: "post_q17",
+    text: "الآن بعد معرفة مصدر الخبر، أرى أن المعلومات فيه صحيحة ومدعومة.",
   },
   {
-    key: "trust_competence_2",
-    text: "الكفاءة: يبدو هذا المصدر خبيراً ومتمكناً في معالجة القضايا المعقدة.",
+    key: "post_q18",
+    text: "الآن بعد الإفصاح، أرى الخبر متوازنًا وخاليا من التحيز.",
   },
   {
-    key: "trust_integrity_1",
-    text: "النزاهة: أثق في أن هذا المصدر يقدم المعلومات بأمانة ودون تلاعب.",
+    key: "post_q19",
+    text: "الآن بعد معرفة المصدر، أرى الخبر يغطي الجوانب الرئيسية.",
   },
   {
-    key: "trust_integrity_2",
-    text: "النزاهة: أعتقد أن هذا المصدر يتسم بالشفافية والالتزام بالمعايير الأخلاقية.",
-  },
-  {
-    key: "trust_benevolence",
-    text: "النزاهة: أشعر أن هذا المصدر يراعي مصلحة القارئ عند صياغة الخبر.",
+    key: "post_q20",
+    text: "الآن بعد الإفصاح، أرى الخبر مفيداً ويوفر معلومات قيمة",
   },
 ];
 
-const aiReasoningQuestions = [
+const trustCompetenceQuestions = [
+  { key: "trust_q21", text: "هذا المصدر خبير في الموضوع الذي كتب عنه" },
+  { key: "trust_q22", text: "هذا المصدر دقيق في نقل الحقائق والإحصائيات" },
+];
+
+const trustIntegrityQuestions = [
+  { key: "trust_q23", text: "هذا المصدر يقدم المعلومات بأمانة وشفافية" },
+  { key: "trust_q24", text: "هذا المصدر يلتزم بالمعايير الأخلاقية المهنية" },
+  { key: "trust_q25", text: "هذا المصدر شفاف في مصادر المعلومات" },
+];
+
+const trustBenevolenceQuestions = [
+  { key: "trust_q26", text: "هذا المصدر يهتم بمصلحة القارئ والمجتمع" },
+  { key: "trust_q27", text: "هذا المصدر يتجنب نشر محتوى ضار للجمهور" },
+  { key: "trust_q28", text: "هذا المصدر يحترم القيم الاجتماعية" },
+];
+
+const cognitiveDissonanceQuestions = [
+  { key: "dissonance_q32", text: "شعرت بالارتباك عند معرفة مصدر الخبر" },
+  { key: "dissonance_q33", text: "أفكاري الأولية حول الخبر تعارضت مع بعضها." },
+  { key: "dissonance_q34", text: "خيّب الإفصاح عن المصدر توقعاتي الأولية" },
+];
+
+const behavioralIntentionQuestions = [
+  { key: "behavior_q29", text: "سأشارك هذا الخبر على وسائل التواصل" },
+  { key: "behavior_q30", text: "سأوصي بهذا الخبر لأصدقائي" },
+  { key: "behavior_q31", text: "سأعتمد عليه كمصدر معلومات" },
+];
+
+const collectiveCultureQuestions = [
   {
-    key: "ai_reason_1",
-    text: "الموضوعية: الذكاء الاصطناعي أكثر حياداً من البشر لأنه لا يملك مشاعر أو أهواء شخصية.",
+    key: "collective_q35",
+    text: "أعتبر نفسي جزءاً من مجموعاتي الاجتماعية (العائلة، الجامعة...)",
   },
   {
-    key: "ai_reason_2",
-    text: "الدقة: الأنظمة الآلية أقل عرضة للخطأ في نقل الأرقام والإحصائيات مقارنة بالصحفيين.",
+    key: "collective_q36",
+    text: "أثق أكثر في القرارات التي تُتخذ جماعياً مقارنة بالقرارات الفردية",
+  },
+  { key: "collective_q37", text: "هويتي تتشكل من خلال علاقتي بالآخرين" },
+  { key: "collective_q38", text: "أقدّر التعاون أكثر من التنافس" },
+];
+
+const aiTechnicalKnowledgeQuestions = [
+  {
+    key: "ai_knowledge_q39",
+    text: "أستطيع تمييز النص المولد آلياً عن النص البشري",
   },
   {
-    key: "ai_reason_3",
-    text: 'الافتقار للنية: الآلة لا تمتلك نية "الخداع"؛ فهي تعرض البيانات كما هي دون تلاعب متعمد.',
+    key: "ai_knowledge_q40",
+    text: 'أعرف مخاطر "الهلوسة" (hallucinations) في الذكاء الاصطناعي',
   },
+];
+
+const attentionCheckQuestion = [
   {
-    key: "ai_reason_4",
-    text: "البرود السياقي: الذكاء الاصطناعي غير قادر على فهم المشاعر الإنسانية أو السياقات الثقافية للأخبار.",
-  },
-  {
-    key: "ai_reason_5",
-    text: 'التبعية البرمجية: ثقتي في الآلة تعتمد كلياً على ثقتي في "المبرمج" الذي صممها وليس في الآلة نفسها.',
-  },
-  {
-    key: "ai_reason_6",
-    text: "غياب المسؤولية: لا يمكن الوثوق بالآلة تماماً لأننا لا نستطيع محاسبتها أخلاقياً أو قانونياً عند الخطأ.",
+    key: "attention_q41",
+    text: 'للتأكد من أنك تقرأ الأسئلة بعناية، يرجى اختيار "موافق بشدة" في هذا السؤال:',
   },
 ];
 
@@ -123,16 +150,35 @@ const futureBehaviorOptions = [
 
 const likertLabels = ["معارض بشدة", "معارض", "محايد", "موافق", "موافق بشدة"];
 
+const manipulationScaleOptions = [
+  "1 (آلة خالصة)",
+  "2",
+  "3",
+  "4",
+  "5 (بشر خالص)",
+];
+
+const manipulationTypeOptions = [
+  "البشري بالكامل",
+  "تعاون هجين (بشر + ذكاء اصطناعي)",
+  "الآلي بالكامل",
+];
+
 const demographics = {
   gender: ["ذكر", "أنثى"],
+  ageRanges: ["17-20 سنة", "21-24 سنة", "25-28 سنة", "29 سنة و أكثر"],
   level: ["ليسانس", "ماستر", "دكتوراه"],
-  specialization: ["علوم إنسانية", "علوم دقيقة", "علوم طبية"],
-  internetUsage: ["أقل من ساعتين", "2-5 ساعات", "+5 ساعات"],
-  aiKnowledge: ["منعدمة", "ضعيفة", "متوسطة", "جيدة", "خبير"],
-  aiToolsUsage: ["بانتظام", "أحياناً", "نادراً", "أبداً"],
+  specialization: [
+    "علوم إنسانية",
+    "علوم اجتماعية",
+    "تقنية/علوم",
+    "اقتصاد/تجارة",
+    "حقوق/قانون",
+    "طب/صيدلة",
+    "أخرى",
+  ],
+  internetUsage: ["أقل من ساعتين", "2-5 ساعات", "أكثر من 5 ساعات"],
 };
-
-const disclosureText = "نظام ذكاء اصطناعي بالكامل دون أي تدخل بشري";
 
 function StepSection({ children, width = "default" }) {
   const widthClass =
@@ -171,6 +217,10 @@ export default function Home() {
     step,
     submitted,
     isSubmitting,
+    classificationCode,
+    disclosureText,
+    isAssigningClassification,
+    classificationError,
     form,
     feelings,
     attentionFlag,
@@ -180,13 +230,19 @@ export default function Home() {
     next,
     prev,
     submit,
+    assignClassification,
   } = useSurveyController({
     totalSteps: TOTAL_STEPS,
-    disclosureText,
     preQuestions,
-    postQuestions,
-    sourceTrustQuestions,
-    aiReasoningQuestions,
+    postCredibilityQuestions,
+    trustCompetenceQuestions,
+    trustIntegrityQuestions,
+    trustBenevolenceQuestions,
+    cognitiveDissonanceQuestions,
+    behavioralIntentionQuestions,
+    collectiveCultureQuestions,
+    aiTechnicalKnowledgeQuestions,
+    attentionCheckQuestion,
   });
 
   useStepScroll(step);
@@ -217,7 +273,7 @@ export default function Home() {
     );
   }
 
-  if (step === 10) {
+  if (step === 11) {
     return (
       <Shell showProgress={false}>
         <StepSection width="narrow">
@@ -396,8 +452,40 @@ export default function Home() {
 
           <ErrorNotice message={error} />
 
+          {isAssigningClassification && (
+            <div className="mt-4 rounded-md border border-(--blue-200) bg-(--blue-50) px-4 py-3 text-right text-sm text-(--blue-700)">
+              جارٍ تحديد تصنيف المشارك...
+            </div>
+          )}
+
+          {!isAssigningClassification && classificationCode && (
+            <div className="mt-4 rounded-md border border-(--success-border) bg-(--success-bg) px-4 py-3 text-right text-sm text-(--success)">
+              تم تعيينك تلقائياً إلى المجموعة: {classificationCode}
+            </div>
+          )}
+
+          {!isAssigningClassification && classificationError && (
+            <div className="mt-4 rounded-md border border-(--error-border) bg-(--error-bg) px-4 py-3 text-right text-sm text-(--error)">
+              <p>{classificationError}</p>
+              <div className="mt-3 flex justify-end">
+                <PrimaryButton onClick={assignClassification}>
+                  إعادة محاولة التعيين
+                </PrimaryButton>
+              </div>
+            </div>
+          )}
+
           <div className="mt-6 flex justify-start">
-            <PrimaryButton onClick={next}>ابدأ الاستبيان</PrimaryButton>
+            <PrimaryButton
+              onClick={next}
+              disabled={
+                isAssigningClassification ||
+                !classificationCode ||
+                Boolean(classificationError)
+              }
+            >
+              ابدأ الاستبيان
+            </PrimaryButton>
           </div>
         </StepSection>
       )}
@@ -423,21 +511,12 @@ export default function Home() {
 
             <div>
               <FieldLabel required>السن</FieldLabel>
-              <TextField
+              <RadioGroup
+                name="age"
                 value={form.age}
-                onChange={(e) =>
-                  updateField(
-                    "age",
-                    e.target.value.replace(
-                      /[^\d\u0660-\u0669\u06F0-\u06F9]/g,
-                      "",
-                    ),
-                  )
-                }
-                placeholder="أدخل العمر بالأرقام"
-                inputMode="numeric"
-                pattern="[0-9\u0660-\u0669\u06F0-\u06F9]*"
-                maxLength={3}
+                onChange={updateField}
+                options={demographics.ageRanges}
+                columns={4}
               />
             </div>
 
@@ -461,6 +540,18 @@ export default function Home() {
                 options={demographics.specialization}
                 columns={3}
               />
+
+              {form.specialization === "أخرى" && (
+                <div className="mt-3">
+                  <TextField
+                    value={form.specializationOther}
+                    onChange={(e) =>
+                      updateField("specializationOther", e.target.value)
+                    }
+                    placeholder="يرجى تحديد التخصص"
+                  />
+                </div>
+              )}
             </div>
 
             <div>
@@ -471,32 +562,6 @@ export default function Home() {
                 onChange={updateField}
                 options={demographics.internetUsage}
                 columns={3}
-              />
-            </div>
-
-            <div>
-              <FieldLabel required>
-                مدى معرفتك بتقنيات الذكاء الاصطناعي
-              </FieldLabel>
-              <RadioGroup
-                name="aiKnowledge"
-                value={form.aiKnowledge}
-                onChange={updateField}
-                options={demographics.aiKnowledge}
-                columns={4}
-              />
-            </div>
-
-            <div>
-              <FieldLabel required>
-                هل تستخدم أدوات مثل ChatGPT أو Gemini؟
-              </FieldLabel>
-              <RadioGroup
-                name="aiToolsUsage"
-                value={form.aiToolsUsage}
-                onChange={updateField}
-                options={demographics.aiToolsUsage}
-                columns={4}
               />
             </div>
           </div>
@@ -608,6 +673,46 @@ export default function Home() {
                   الإفصاح.
                 </p>
 
+                <div className="mb-6 rounded-md border border-(--border) bg-(--surface-alt) p-4 text-right sm:p-5">
+                  <SectionHeading
+                    eyebrow="القسم 5"
+                    title="التحقق من التلاعب"
+                    subtitle="يرجى الإجابة عن السؤالين التاليين قبل المتابعة"
+                  />
+
+                  <div className="space-y-6">
+                    <div>
+                      <FieldLabel required>
+                        15. بناءً على الإفصاح الذي ظهر لك الآن عن مصدر الخبر،
+                        إلى أي مدى ترى أن البشر ساهموا في إنتاج هذا الخبر؟
+                      </FieldLabel>
+                      <RadioGroup
+                        name="manipulation_q15"
+                        value={form.manipulation_q15}
+                        onChange={updateField}
+                        options={manipulationScaleOptions}
+                        columns={5}
+                      />
+                    </div>
+
+                    <div>
+                      <FieldLabel required>
+                        16. بناءً على نفس الإفصاح، هل ترى أن الخبر يعتمد بشكل
+                        رئيسي على:
+                      </FieldLabel>
+                      <RadioGroup
+                        name="manipulation_q16"
+                        value={form.manipulation_q16}
+                        onChange={updateField}
+                        options={manipulationTypeOptions}
+                        columns={3}
+                      />
+                    </div>
+                  </div>
+
+                  <ErrorNotice message={error} />
+                </div>
+
                 {/* action */}
                 <div className="flex justify-center">
                   <DangerButton onClick={next} className="min-w-[180px]">
@@ -633,7 +738,7 @@ export default function Home() {
           <LikertGroup
             title="جدول تقييم الخبر"
             sub="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
-            questions={postQuestions}
+            questions={postCredibilityQuestions}
             form={form}
             onChange={updateField}
             labels={likertLabels}
@@ -658,17 +763,61 @@ export default function Home() {
             subtitle={`بناءً على معرفتك الآن بأن المصدر هو "${disclosureText}"، يرجى تحديد مدى اتفاقك مع العبارات التالية:`}
           />
 
-          <div className="space-y-4">
-            {sourceTrustQuestions.map((question) => (
-              <LikertCard
-                key={question.key}
-                name={question.key}
-                text={question.text}
-                value={form[question.key]}
-                onChange={updateField}
-                labels={likertLabels}
-              />
-            ))}
+          {/* Competence */}
+          <div className="mb-8">
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              الكفاءة
+            </h3>
+            <div className="space-y-4">
+              {trustCompetenceQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Integrity */}
+          <div className="mb-8">
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              النزاهة
+            </h3>
+            <div className="space-y-4">
+              {trustIntegrityQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Benevolence */}
+          <div>
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              حسن النوايا
+            </h3>
+            <div className="space-y-4">
+              {trustBenevolenceQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
           </div>
 
           <ErrorNotice message={error} />
@@ -686,21 +835,46 @@ export default function Home() {
         <StepSection width="wide">
           <SectionHeading
             eyebrow="الخطوة 6"
-            title="مقياس الاستدلال الآلي"
-            subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية التي تصف أنظمة الذكاء الاصطناعي بشكل عام عند استخدامها في كتابة الأخبار:"
+            title="التنافر الإدراكي والنية السلوكية"
+            subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
           />
 
-          <div className="space-y-4">
-            {aiReasoningQuestions.map((question) => (
-              <LikertCard
-                key={question.key}
-                name={question.key}
-                text={question.text}
-                value={form[question.key]}
-                onChange={updateField}
-                labels={likertLabels}
-              />
-            ))}
+          {/* Cognitive Dissonance Section */}
+          <div className="mb-8">
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              التنافر الإدراكي
+            </h3>
+            <div className="space-y-4">
+              {cognitiveDissonanceQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Behavioral Intention Section */}
+          <div>
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              النية السلوكية
+            </h3>
+            <div className="space-y-4">
+              {behavioralIntentionQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
           </div>
 
           <ErrorNotice message={error} />
@@ -715,8 +889,84 @@ export default function Home() {
       )}
 
       {step === 9 && (
+        <StepSection width="wide">
+          <SectionHeading
+            eyebrow="الخطوة 7"
+            title="المتغيرات المعدلة"
+            subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
+          />
+
+          {/* Collective Culture Section */}
+          <div className="mb-8">
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              الثقافة الجمعية
+            </h3>
+            <div className="space-y-4">
+              {collectiveCultureQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* AI Technical Knowledge Section */}
+          <div className="mb-8">
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              المعرفة التقنية بالذكاء الاصطناعي
+            </h3>
+            <div className="space-y-4">
+              {aiTechnicalKnowledgeQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Attention Check Section */}
+          <div className="mb-8">
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              سؤال الانتباه
+            </h3>
+            <div className="space-y-4">
+              {attentionCheckQuestion.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
+          </div>
+
+          <ErrorNotice message={error} />
+
+          <ActionRow
+            onPrev={prev}
+            onNext={next}
+            step={step}
+            prevDisabled={false}
+          />
+        </StepSection>
+      )}
+
+      {step === 10 && (
         <StepSection>
-          <SectionHeading eyebrow="الخطوة 7" title="ما بعد التجربة" />
+          <SectionHeading eyebrow="الخطوة 8" title="ما بعد التجربة" />
 
           <div className="space-y-8">
             <div>

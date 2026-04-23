@@ -1,6 +1,6 @@
 const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
 
-export async function POST(request) {
+export async function POST() {
   if (!GOOGLE_SCRIPT_URL) {
     return Response.json(
       {
@@ -12,24 +12,12 @@ export async function POST(request) {
   }
 
   try {
-    const body = await request.json();
-
-    if (!body || typeof body !== "object" || Array.isArray(body)) {
-      return Response.json(
-        {
-          success: false,
-          message: "Invalid survey payload.",
-        },
-        { status: 400 },
-      );
-    }
-
     const upstreamRes = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ action: "assignClassification" }),
       cache: "no-store",
     });
 
@@ -53,12 +41,25 @@ export async function POST(request) {
       );
     }
 
-    return Response.json({ success: true, details: upstreamJson });
+    const details = upstreamJson?.details ?? upstreamJson;
+
+    if (!details?.classificationCode || !details?.disclosureText) {
+      return Response.json(
+        {
+          success: false,
+          message: "Invalid classification assignment response.",
+          details: upstreamJson,
+        },
+        { status: 502 },
+      );
+    }
+
+    return Response.json({ success: true, details });
   } catch {
     return Response.json(
       {
         success: false,
-        message: "Failed to submit survey response.",
+        message: "Failed to assign survey classification.",
       },
       { status: 500 },
     );
