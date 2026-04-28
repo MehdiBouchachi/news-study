@@ -1,5 +1,18 @@
 const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
 
+const PARTICIPANT_COOKIE = "newsStudyParticipantId";
+
+function getParticipantIdFromCookie(cookieHeader) {
+  if (!cookieHeader) return "";
+  const cookies = cookieHeader.split(";").map((part) => part.trim());
+  for (const item of cookies) {
+    if (item.startsWith(`${PARTICIPANT_COOKIE}=`)) {
+      return decodeURIComponent(item.slice(PARTICIPANT_COOKIE.length + 1));
+    }
+  }
+  return "";
+}
+
 export async function POST(request) {
   if (!GOOGLE_SCRIPT_URL) {
     return Response.json(
@@ -24,12 +37,20 @@ export async function POST(request) {
       );
     }
 
+    const participantId = getParticipantIdFromCookie(
+      request.headers.get("cookie") || "",
+    );
+
+    const upstreamBody = participantId
+      ? { action: "submitResponse", participantId, ...body }
+      : { action: "submitResponse", ...body };
+
     const upstreamRes = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(upstreamBody),
       cache: "no-store",
     });
 

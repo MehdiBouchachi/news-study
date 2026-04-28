@@ -42,95 +42,105 @@ const articleParagraphs = [
   "ومن المتوقع أن تخضع هذه النتائج لمراجعة من قبل الهيئات التنظيمية (مثل منظمة الصحة العالمية والوكالة الأوروبية للأدوية) خلال الأسابيع القادمة، تمهيداً لاعتماده رسمياً. ويُنظر إلى هذا التطور على أنه خطوة حاسمة في إدارة الجائحات المستقبلية، خاصة في ظل التحديات المتزايدة التي تفرضها سرعة تحور الفيروسات التنفسية.",
 ];
 
+// ─── Question definitions — keys MUST match template column names exactly ────
+
 const preQuestions = [
-  { key: "pre_q7", text: "المعلومات في الخبر صحيحة ومدعومة" },
-  { key: "pre_q8", text: "الخبر متوازن وخالٍ من التحيز" },
-  { key: "pre_q9", text: "الخبر يغطي الجوانب الرئيسية للموضوع" },
-  { key: "pre_q10", text: "الخبر مفيد ويوفر معلومات قيمة" },
-  { key: "pre_q11", text: "سأشارك هذا الخبر على وسائل التواصل" },
-  { key: "pre_q12", text: "سأوصي بهذا الخبر لأصدقائي" },
-  { key: "pre_q13", text: "سأعتمد عليه كمصدر معلومات" },
+  { key: "Q7 - صحة المعلومات", text: "المعلومات في الخبر صحيحة ومدعومة" },
+  { key: "Q8 - التوازن", text: "الخبر متوازن وخالٍ من التحيز" },
+  { key: "Q9 - التغطية", text: "الخبر يغطي الجوانب الرئيسية للموضوع" },
+  { key: "Q10 - الفائدة", text: "الخبر مفيد ويوفر معلومات قيمة" },
+  { key: "Q11 - المشاركة", text: "سأشارك هذا الخبر على وسائل التواصل" },
+  { key: "Q12 - التوصية", text: "سأوصي بهذا الخبر لأصدقائي" },
+  { key: "Q13 - الاعتماد", text: "سأعتمد عليه كمصدر معلومات" },
 ];
 
 const postCredibilityQuestions = [
   {
-    key: "post_q17",
+    key: "Q17 - الصحة",
     text: "الآن بعد معرفة مصدر الخبر، أرى أن المعلومات فيه صحيحة ومدعومة.",
   },
   {
-    key: "post_q18",
+    key: "Q18 - التوازن",
     text: "الآن بعد الإفصاح، أرى الخبر متوازنًا وخاليا من التحيز.",
   },
   {
-    key: "post_q19",
+    key: "Q19 - التغطية",
     text: "الآن بعد معرفة المصدر، أرى الخبر يغطي الجوانب الرئيسية.",
   },
   {
-    key: "post_q20",
+    key: "Q20 - الفائدة",
     text: "الآن بعد الإفصاح، أرى الخبر مفيداً ويوفر معلومات قيمة",
   },
 ];
 
 const trustCompetenceQuestions = [
-  { key: "trust_q21", text: "هذا المصدر خبير في الموضوع الذي كتب عنه" },
-  { key: "trust_q22", text: "هذا المصدر دقيق في نقل الحقائق والإحصائيات" },
+  { key: "Q21 - الخبرة", text: "هذا المصدر خبير في الموضوع الذي كتب عنه" },
+  { key: "Q22 - الدقة", text: "هذا المصدر دقيق في نقل الحقائق والإحصائيات" },
 ];
 
 const trustIntegrityQuestions = [
-  { key: "trust_q23", text: "هذا المصدر يقدم المعلومات بأمانة وشفافية" },
-  { key: "trust_q24", text: "هذا المصدر يلتزم بالمعايير الأخلاقية المهنية" },
-  { key: "trust_q25", text: "هذا المصدر شفاف في مصادر المعلومات" },
+  { key: "Q23 - الأمانة", text: "هذا المصدر يقدم المعلومات بأمانة وشفافية" },
+  {
+    key: "Q24 - الأخلاق",
+    text: "هذا المصدر يلتزم بالمعايير الأخلاقية المهنية",
+  },
+  { key: "Q25 - الشفافية", text: "هذا المصدر شفاف في مصادر المعلومات" },
 ];
 
 const trustBenevolenceQuestions = [
-  { key: "trust_q26", text: "هذا المصدر يهتم بمصلحة القارئ والمجتمع" },
-  { key: "trust_q27", text: "هذا المصدر يتجنب نشر محتوى ضار للجمهور" },
-  { key: "trust_q28", text: "هذا المصدر يحترم القيم الاجتماعية" },
+  { key: "Q26 - المصلحة", text: "هذا المصدر يهتم بمصلحة القارئ والمجتمع" },
+  { key: "Q27 - تجنب الضرر", text: "هذا المصدر يتجنب نشر محتوى ضار للجمهور" },
+  { key: "Q28 - القيم", text: "هذا المصدر يحترم القيم الاجتماعية" },
+];
+
+// NOTE: template order is Q29–Q31 (behavioral) then Q32–Q34 (dissonance)
+const behavioralIntentionQuestions = [
+  { key: "Q29 - المشاركة", text: "سأشارك هذا الخبر على وسائل التواصل" },
+  { key: "Q30 - التوصية", text: "سأوصي بهذا الخبر لأصدقائي" },
+  { key: "Q31 - الاعتماد", text: "سأعتمد عليه كمصدر معلومات" },
 ];
 
 const cognitiveDissonanceQuestions = [
-  { key: "dissonance_q32", text: "شعرت بالارتباك عند معرفة مصدر الخبر" },
-  { key: "dissonance_q33", text: "أفكاري الأولية حول الخبر تعارضت مع بعضها." },
-  { key: "dissonance_q34", text: "خيّب الإفصاح عن المصدر توقعاتي الأولية" },
-];
-
-const behavioralIntentionQuestions = [
-  { key: "behavior_q29", text: "سأشارك هذا الخبر على وسائل التواصل" },
-  { key: "behavior_q30", text: "سأوصي بهذا الخبر لأصدقائي" },
-  { key: "behavior_q31", text: "سأعتمد عليه كمصدر معلومات" },
+  { key: "Q32 - الارتباك", text: "شعرت بالارتباك عند معرفة مصدر الخبر" },
+  { key: "Q33 - التعارض", text: "أفكاري الأولية حول الخبر تعارضت مع بعضها." },
+  {
+    key: "Q34 - خيبة الأمل",
+    text: "خيّب الإفصاح عن المصدر توقعاتي الأولية",
+  },
 ];
 
 const collectiveCultureQuestions = [
   {
-    key: "collective_q35",
+    key: "Q35 - الانتماء",
     text: "أعتبر نفسي جزءاً من مجموعاتي الاجتماعية (العائلة، الجامعة...)",
   },
   {
-    key: "collective_q36",
+    key: "Q36 - الثقة الجماعية",
     text: "أثق أكثر في القرارات التي تُتخذ جماعياً مقارنة بالقرارات الفردية",
   },
-  { key: "collective_q37", text: "هويتي تتشكل من خلال علاقتي بالآخرين" },
-  { key: "collective_q38", text: "أقدّر التعاون أكثر من التنافس" },
+  { key: "Q37 - الهوية", text: "هويتي تتشكل من خلال علاقتي بالآخرين" },
+  { key: "Q38 - التعاون", text: "أقدّر التعاون أكثر من التنافس" },
 ];
 
 const aiTechnicalKnowledgeQuestions = [
   {
-    key: "ai_knowledge_q39",
+    key: "Q39 - تمييز النص",
     text: "أستطيع تمييز النص المولد آلياً عن النص البشري",
   },
   {
-    key: "ai_knowledge_q40",
+    key: "Q40 - الهلوسة",
     text: 'أعرف مخاطر "الهلوسة" (hallucinations) في الذكاء الاصطناعي',
   },
 ];
 
 const attentionCheckQuestion = [
   {
-    key: "attention_q41",
+    key: "Q41 - الانتباه",
     text: 'للتأكد من أنك تقرأ الأسئلة بعناية، يرجى اختيار "موافق بشدة" في هذا السؤال:',
   },
 ];
 
+// ─── These labels MUST match FEELING_COLUMN_MAP labels in useSurveyController ─
 const postExperimentFeelings = [
   "الدهشة والانبهار (لم أتوقع أن تكون الآلة بهذا المستوى من الجودة).",
   "الارتياب والشك (شعرت بضرورة إعادة فحص كل معلومة قرأتها).",
@@ -169,15 +179,20 @@ const demographics = {
   ageRanges: ["17-20 سنة", "21-24 سنة", "25-28 سنة", "29 سنة و أكثر"],
   level: ["ليسانس", "ماستر", "دكتوراه"],
   specialization: [
-    "علوم إنسانية",
-    "علوم اجتماعية",
-    "تقنية/علوم",
+    "آداب و لغات",
+    "علوم اجتماعية /إنسانية",
     "اقتصاد/تجارة",
     "حقوق/قانون",
     "طب/صيدلة",
     "أخرى",
   ],
   internetUsage: ["أقل من ساعتين", "2-5 ساعات", "أكثر من 5 ساعات"],
+  universities: [
+    "جامعة البليدة 2",
+    "جامعة الجزائر 3",
+    "جامعة تيبازة",
+    "جامعة البليدة 1",
+  ],
 };
 
 function StepSection({ children, width = "default" }) {
@@ -366,20 +381,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Footer */}
-              <div className="pt-4">
-                <div className="mx-auto mb-4 h-px w-24 bg-(--border)" />
-
-                <div className="text-center text-sm leading-7 text-(--text-muted)">
-                  <p className="font-semibold text-(--text-strong)">
-                    الطالب الباحث: نحال جيـلالي
-                  </p>
-                  <p>إشراف: الدكتور الهاشمي بيدوش</p>
-                  <p>جامعة البليدة 2</p>
-                </div>
-              </div>
-
-              {/* Optional internal note */}
               {attentionFlag && (
                 <div className="mt-6 rounded-md border border-(--error-border) bg-(--error-bg) px-4 py-3 text-right text-sm leading-7 text-(--error)">
                   ملاحظة داخلية: تم تسجيل مخالفة في سؤال الانتباه.
@@ -492,6 +493,22 @@ export default function Home() {
           />
 
           <div className="space-y-8">
+            <div>
+              <FieldLabel required hint="سيُستخدم للتواصل عند طلب حذف البيانات">
+                البريد الإلكتروني
+              </FieldLabel>
+              <TextField
+                value={form.email}
+                onChange={(e) => updateField("email", e.target.value)}
+                placeholder="name@example.com"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                dir="ltr"
+                className="text-left"
+              />
+            </div>
+
             <div>
               <FieldLabel required>الجنس</FieldLabel>
               <RadioGroup
@@ -681,8 +698,8 @@ export default function Home() {
                         إلى أي مدى ترى أن البشر ساهموا في إنتاج هذا الخبر؟
                       </FieldLabel>
                       <RadioGroup
-                        name="manipulation_q15"
-                        value={form.manipulation_q15}
+                        name="Q15 - مساهمة البشر"
+                        value={form["Q15 - مساهمة البشر"]}
                         onChange={updateField}
                         options={manipulationScaleOptions}
                         columns={5}
@@ -695,8 +712,8 @@ export default function Home() {
                         رئيسي على:
                       </FieldLabel>
                       <RadioGroup
-                        name="manipulation_q16"
-                        value={form.manipulation_q16}
+                        name="Q16 - نوع المصدر"
+                        value={form["Q16 - نوع المصدر"]}
                         onChange={updateField}
                         options={manipulationTypeOptions}
                         columns={3}
@@ -833,7 +850,7 @@ export default function Home() {
             subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
           />
 
-          {/* Cognitive Dissonance Section */}
+          {/* Cognitive Dissonance */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               التنافر الإدراكي
@@ -852,7 +869,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Behavioral Intention Section */}
+          {/* Behavioral Intention */}
           <div>
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               النية السلوكية
@@ -890,7 +907,7 @@ export default function Home() {
             subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
           />
 
-          {/* Collective Culture Section */}
+          {/* Collective Culture */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               الثقافة الجمعية
@@ -909,7 +926,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* AI Technical Knowledge Section */}
+          {/* AI Technical Knowledge */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               المعرفة التقنية بالذكاء الاصطناعي
@@ -928,7 +945,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Attention Check Section */}
+          {/* Attention Check */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               سؤال الانتباه
@@ -1024,6 +1041,55 @@ export default function Home() {
                 placeholder="اكتب إجابتك هنا..."
                 rows={6}
               />
+            </div>
+
+            <div className="rounded-md border border-(--border) bg-white p-5 shadow-(--shadow-xs) sm:p-6">
+              <SectionHeading
+                eyebrow="القسم 9"
+                title="الديموغرافيا النهائية"
+                subtitle="(السؤال 42)"
+              />
+
+              <div className="space-y-6">
+                <div>
+                  <FieldLabel required>42. الجامعة التي تدرس بها:</FieldLabel>
+                  <RadioGroup
+                    name="university"
+                    value={form.university}
+                    onChange={updateField}
+                    options={demographics.universities}
+                    columns={2}
+                  />
+                </div>
+
+                <div className="rounded-md border border-(--border) bg-(--surface-alt) px-4 py-4 text-right text-sm leading-8 text-(--text-body)">
+                  <p className="font-semibold text-(--text-strong)">
+                    43. شكراً لمشاركتك القيمة!
+                  </p>
+                  <p className="mt-2">
+                    إخفاء مصدر الخبر في البداية كان ضرورة علمية لقياس تقييماتك
+                    العفوية دون تحيز مسبق. بياناتك مشفّرة وسرية تامة.
+                  </p>
+                  <p className="mt-2">
+                    في حال رغبتك بحذف بياناتك، يمكنك التواصل معنا عبر:
+                    <span className="mx-1 font-semibold text-(--blue-800)">
+                      research@media-algeria.dz
+                    </span>
+                  </p>
+                  <div className="mt-3">
+                    <CheckOption
+                      checked={Boolean(form.deleteDataRequest)}
+                      onChange={() =>
+                        updateField(
+                          "deleteDataRequest",
+                          !form.deleteDataRequest,
+                        )
+                      }
+                      label="أرغب بحذف بياناتي"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

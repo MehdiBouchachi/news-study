@@ -1,6 +1,25 @@
 const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
 
-export async function POST() {
+const PARTICIPANT_COOKIE = "newsStudyParticipantId";
+
+function getParticipantIdFromCookie(cookieHeader) {
+  if (!cookieHeader) return "";
+  const cookies = cookieHeader.split(";").map((part) => part.trim());
+  for (const item of cookies) {
+    if (item.startsWith(`${PARTICIPANT_COOKIE}=`)) {
+      return decodeURIComponent(item.slice(PARTICIPANT_COOKIE.length + 1));
+    }
+  }
+  return "";
+}
+
+function generateParticipantId() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  // Fallback for runtimes without randomUUID.
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+export async function POST(request) {
   if (!GOOGLE_SCRIPT_URL) {
     return Response.json(
       {
@@ -11,13 +30,17 @@ export async function POST() {
     );
   }
 
+  const cookieHeader = request.headers.get("cookie") || "";
+  const existingParticipantId = getParticipantIdFromCookie(cookieHeader);
+  const participantId = existingParticipantId || generateParticipantId();
+
   try {
     const upstreamRes = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ action: "assignClassification" }),
+      body: JSON.stringify({ action: "assignClassification", participantId }),
       cache: "no-store",
     });
 
@@ -54,7 +77,16 @@ export async function POST() {
       );
     }
 
-    return Response.json({ success: true, details });
+    const res = Response.json({ success: true, details, participantId });
+
+    if (!existingParticipantId) {
+      res.headers.set(
+        "Set-Cookie",
+        `${PARTICIPANT_COOKIE}=${encodeURIComponent(participantId)}; Path=/; SameSite=Lax; Max-Age=31536000`,
+      );
+    }
+
+    return res;
   } catch {
     return Response.json(
       {
