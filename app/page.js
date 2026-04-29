@@ -924,7 +924,23 @@ export default function Home() {
               ))}
             </div>
           </div>
-
+          <div>
+            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
+              النية السلوكية
+            </h3>
+            <div className="space-y-4">
+              {behavioralIntentionQuestions.map((question) => (
+                <LikertCard
+                  key={question.key}
+                  name={question.key}
+                  text={question.text}
+                  value={form[question.key]}
+                  onChange={updateField}
+                  labels={likertLabels}
+                />
+              ))}
+            </div>
+          </div>
           <ErrorNotice message={error} />
 
           <ActionRow
@@ -951,24 +967,6 @@ export default function Home() {
             </h3>
             <div className="space-y-4">
               {cognitiveDissonanceQuestions.map((question) => (
-                <LikertCard
-                  key={question.key}
-                  name={question.key}
-                  text={question.text}
-                  value={form[question.key]}
-                  onChange={updateField}
-                  labels={likertLabels}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
-              النية السلوكية
-            </h3>
-            <div className="space-y-4">
-              {behavioralIntentionQuestions.map((question) => (
                 <LikertCard
                   key={question.key}
                   name={question.key}
