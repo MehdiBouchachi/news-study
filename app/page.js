@@ -4,6 +4,7 @@ import {
   FiAlertTriangle,
   FiCheckCircle,
   FiFileText,
+  FiInfo,
   FiLogOut,
   FiShield,
 } from "react-icons/fi";
@@ -29,6 +30,39 @@ import { useSurveyController } from "./_hooks/useSurveyController";
 import { useStepScroll } from "./_hooks/useStepScroll";
 
 const TOTAL_STEPS = 11;
+
+const CLASSIFICATIONS = [
+  {
+    code: "C1",
+    label: "C1 - بشري بالكامل",
+    disclosureText:
+      "هذا المحتوى كتبه صحفي بشري بالكامل دون استخدام أي أدوات ذكاء اصطناعي.",
+  },
+  {
+    code: "C2",
+    label: "C2 - بشري مع مساعدة خفيفة",
+    disclosureText:
+      "هذا المحتوى كتبه صحفي بشري مع مساعدة خفيفة من ChatGPT، مثل التدقيق اللغوي أو تحسين الصياغة.",
+  },
+  {
+    code: "C3",
+    label: "C3 - تعاون بشري وChatGPT",
+    disclosureText:
+      "هذا المحتوى نتيجة تعاون: حدد البشر الفكرة، كتب ChatGPT المسودة، ثم راجع البشر النسخة النهائية.",
+  },
+  {
+    code: "C4",
+    label: "C4 - ChatGPT مع مراجعة بشرية",
+    disclosureText:
+      "هذا المحتوى كتبه ChatGPT بالكامل مع مراجعة بشرية محدودة للتحقق من بعض المعلومات الأساسية.",
+  },
+  {
+    code: "C5",
+    label: "C5 - ChatGPT فقط",
+    disclosureText:
+      "هذا المحتوى مولّد بالكامل بواسطة ChatGPT دون أي تدخل بشري.",
+  },
+];
 
 const articleTitle =
   "لقاح جديد يظهر كفاءة بنسبة 94% في الوقاية من سلالات كورونا المتحورة";
@@ -93,7 +127,6 @@ const trustBenevolenceQuestions = [
   { key: "Q28 - القيم", text: "هذا المصدر يحترم القيم الاجتماعية" },
 ];
 
-// NOTE: template order is Q29–Q31 (behavioral) then Q32–Q34 (dissonance)
 const behavioralIntentionQuestions = [
   { key: "Q29 - المشاركة", text: "سأشارك هذا الخبر على وسائل التواصل" },
   { key: "Q30 - التوصية", text: "سأوصي بهذا الخبر لأصدقائي" },
@@ -140,7 +173,6 @@ const attentionCheckQuestion = [
   },
 ];
 
-// ─── These labels MUST match FEELING_COLUMN_MAP labels in useSurveyController ─
 const postExperimentFeelings = [
   "الدهشة والانبهار (لم أتوقع أن تكون الآلة بهذا المستوى من الجودة).",
   "الارتياب والشك (شعرت بضرورة إعادة فحص كل معلومة قرأتها).",
@@ -196,6 +228,24 @@ const demographics = {
   ],
 };
 
+// ─── Persistent disclosure banner — shown from step 5 onwards ────────────────
+function DisclosureBanner({ disclosureText }) {
+  if (!disclosureText) return null;
+  return (
+    <div className="w-full border-b border-(--warning-border) bg-(--warning-bg) shadow-sm">
+      <div className="mx-auto flex max-w-[1120px] items-center justify-center gap-2 px-4 py-2.5 text-center">
+        <FiInfo
+          className="shrink-0 text-base text-(--amber-700)"
+          aria-hidden="true"
+        />
+        <p className="text-sm font-semibold leading-6 text-(--amber-700) sm:text-[0.95rem]">
+          تنبيه: مصدر هذا الخبر هو —{" "}
+          <span className="font-bold">{disclosureText}</span>
+        </p>
+      </div>
+    </div>
+  );
+}
 function StepSection({ children, width = "default" }) {
   const widthClass =
     width === "wide"
@@ -241,6 +291,7 @@ export default function Home() {
     feelings,
     attentionFlag,
     error,
+    alreadySubmitted,
     updateField,
     toggleFeeling,
     next,
@@ -263,6 +314,42 @@ export default function Home() {
 
   useStepScroll(step);
 
+  // ── Already submitted guard ───────────────────────────────────────────────
+  if (alreadySubmitted) {
+    return (
+      <Shell showProgress={false}>
+        <div className="px-4 py-20 sm:py-28">
+          <div className="mx-auto max-w-xl text-center">
+            <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[linear-gradient(180deg,#ffffff,var(--success-bg))] text-(--success) ring-1 ring-[rgba(47,133,90,0.16)] shadow-[0_10px_24px_rgba(47,133,90,0.10)]">
+              <FiCheckCircle className="text-[1.9rem]" aria-hidden="true" />
+            </div>
+
+            <span className="inline-flex rounded-full bg-(--success-bg) px-3 py-1 text-xs font-semibold text-(--success)">
+              تم الإرسال مسبقاً
+            </span>
+
+            <h1 className="mt-4 mb-3 text-[1.8rem] font-bold leading-tight text-(--text-strong) sm:text-[2.2rem]">
+              لقد شاركت في الدراسة من قبل
+            </h1>
+
+            <p className="mx-auto max-w-[34rem] text-sm leading-8 text-(--text-muted) sm:text-[1.02rem]">
+              سجّلنا مشاركتك بنجاح في وقت سابق. لا يمكن تقديم الاستبيان مرة أخرى
+              من نفس الجهاز للحفاظ على نزاهة البيانات البحثية.
+            </p>
+
+            <p className="mt-5 text-sm leading-7 text-(--text-muted)">
+              إن كنت تعتقد أن هذا خطأ، يرجى التواصل مع فريق البحث عبر:{" "}
+              <span className="font-semibold text-(--blue-800)">
+                research@media-algeria.dz
+              </span>
+            </p>
+          </div>
+        </div>
+      </Shell>
+    );
+  }
+
+  // ── Consent declined ──────────────────────────────────────────────────────
   if (submitted && form.consent === "no") {
     return (
       <Shell showProgress={false}>
@@ -289,12 +376,12 @@ export default function Home() {
     );
   }
 
+  // ── Completion screen (step 11) ───────────────────────────────────────────
   if (step === 11) {
     return (
       <Shell showProgress={false}>
         <StepSection width="narrow">
           <div className="mx-auto max-w-3xl text-right">
-            {/* Header */}
             <div className="mb-12 text-center">
               <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[linear-gradient(180deg,#ffffff,var(--success-bg))] text-(--success) ring-1 ring-[rgba(47,133,90,0.16)] shadow-[0_10px_24px_rgba(47,133,90,0.10)]">
                 <FiCheckCircle className="text-[1.9rem]" aria-hidden="true" />
@@ -313,7 +400,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Intro */}
             <div className="space-y-5">
               <p className="text-sm font-semibold text-(--blue-900) sm:text-base">
                 عزيزي الطالب / المشارك،
@@ -325,7 +411,6 @@ export default function Home() {
                 الجمهور مع تكنولوجيا الذكاء الاصطناعي في المجال الإعلامي.
               </p>
 
-              {/* Debriefing */}
               <div className="rounded-md border border-(--blue-200) bg-[linear-gradient(180deg,#ffffff,var(--blue-50))] px-5 py-5 shadow-[var(--shadow-xs)]">
                 <h2 className="mb-3 text-right text-base font-bold text-(--blue-800) sm:text-lg">
                   توضيح هام حول طبيعة الدراسة (Debriefing)
@@ -339,7 +424,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Guarantees */}
               <div className="pt-2">
                 <p className="mb-4 text-sm font-semibold text-(--text-strong) sm:text-base">
                   نؤكد لك ما يلي:
@@ -394,8 +478,16 @@ export default function Home() {
     );
   }
 
+  // ── Steps 5–10: show persistent disclosure banner ─────────────────────────
+  const showDisclosureBanner = step >= 5 && !!disclosureText;
+
   return (
     <Shell step={step}>
+      {showDisclosureBanner && (
+        <DisclosureBanner disclosureText={disclosureText} />
+      )}
+
+      {/* ── Step 1: Consent ─────────────────────────────────────────────── */}
       {step === 1 && (
         <StepSection width="narrow">
           <div className="mb-7 text-right">
@@ -486,6 +578,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 2: Demographics ─────────────────────────────────────────── */}
       {step === 2 && (
         <StepSection>
           <SectionHeading
@@ -588,6 +681,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 3: Instructions ─────────────────────────────────────────── */}
       {step === 3 && (
         <StepSection width="narrow">
           <SectionHeading eyebrow="الخطوة 2" title="تعليمات القراءة" />
@@ -615,6 +709,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 4: Article + Pre-test ───────────────────────────────────── */}
       {step === 4 && (
         <StepSection width="wide">
           <ArticleBlock
@@ -645,15 +740,14 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 5: Disclosure reveal + manipulation check ───────────────── */}
       {step === 5 && (
         <StepSection width="narrow">
           <div className="mx-auto max-w-3xl">
             <div className="overflow-hidden rounded-md border border-(--warning-border) bg-white shadow-[var(--shadow-sm)]">
-              {/* top accent */}
               <div className="h-1.5 bg-[linear-gradient(90deg,var(--amber-700),#d7a24a)]" />
 
               <div className="px-5 py-6 text-center sm:px-8 sm:py-8">
-                {/* icon */}
                 <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-(--warning-bg) text-(--amber-700)">
                   <FiAlertTriangle
                     className="text-[1.6rem]"
@@ -661,24 +755,20 @@ export default function Home() {
                   />
                 </div>
 
-                {/* title */}
                 <h2 className="mb-3 text-center text-[1.35rem] font-bold text-(--amber-700) sm:text-[1.7rem]">
                   تنبيه هام
                 </h2>
 
-                {/* intro */}
                 <p className="mb-3 text-center text-sm font-semibold text-(--text-strong) sm:text-base">
                   الأخبار التي قرأتها تم إنتاجها بواسطة:
                 </p>
 
-                {/* disclosure */}
                 <div className="mx-auto mb-5 max-w-xl rounded-md border border-(--warning-border) bg-(--warning-bg) px-4 py-4 text-center shadow-[var(--shadow-xs)]">
                   <p className="text-base font-bold leading-8 text-(--text-strong) sm:text-[1.05rem]">
                     {disclosureText}
                   </p>
                 </div>
 
-                {/* explanation */}
                 <p className="mx-auto mb-7 max-w-[46ch] text-center text-sm leading-8 text-(--text-muted) sm:text-base">
                   سنعرض الخبر مرة أخرى، ثم نطلب منك إعادة التقييم بعد معرفة
                   طبيعة المصدر، حتى نقارن بين الانطباع الأول والانطباع بعد
@@ -725,7 +815,6 @@ export default function Home() {
                   <ErrorNotice message={error} />
                 </div>
 
-                {/* action */}
                 <div className="flex justify-center">
                   <DangerButton onClick={next} className="min-w-[180px]">
                     متابعة التقييم
@@ -737,6 +826,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 6: Article re-read + post credibility ───────────────────── */}
       {step === 6 && (
         <StepSection width="wide">
           <ArticleBlock
@@ -767,6 +857,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 7: Trust in source ──────────────────────────────────────── */}
       {step === 7 && (
         <StepSection width="wide">
           <SectionHeading
@@ -775,7 +866,6 @@ export default function Home() {
             subtitle={`بناءً على معرفتك الآن بأن المصدر هو "${disclosureText}"، يرجى تحديد مدى اتفاقك مع العبارات التالية:`}
           />
 
-          {/* Competence */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               الكفاءة
@@ -794,7 +884,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Integrity */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               النزاهة
@@ -813,7 +902,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Benevolence */}
           <div>
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               حسن النوايا
@@ -843,6 +931,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 8: Cognitive dissonance + behavioral intention ──────────── */}
       {step === 8 && (
         <StepSection width="wide">
           <SectionHeading
@@ -851,7 +940,6 @@ export default function Home() {
             subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
           />
 
-          {/* Cognitive Dissonance */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               التنافر الإدراكي
@@ -870,7 +958,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Behavioral Intention */}
           <div>
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               النية السلوكية
@@ -900,6 +987,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 9: Moderating variables ─────────────────────────────────── */}
       {step === 9 && (
         <StepSection width="wide">
           <SectionHeading
@@ -908,7 +996,6 @@ export default function Home() {
             subtitle="يرجى تحديد مدى اتفاقك مع العبارات التالية:"
           />
 
-          {/* Collective Culture */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               الثقافة الجمعية
@@ -927,7 +1014,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* AI Technical Knowledge */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               المعرفة التقنية بالذكاء الاصطناعي
@@ -946,7 +1032,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Attention Check */}
           <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               سؤال الانتباه
@@ -976,6 +1061,7 @@ export default function Home() {
         </StepSection>
       )}
 
+      {/* ── Step 10: Post-experiment ─────────────────────────────────────── */}
       {step === 10 && (
         <StepSection>
           <SectionHeading eyebrow="الخطوة 8" title="ما بعد التجربة" />

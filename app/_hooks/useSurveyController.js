@@ -15,23 +15,29 @@ const VALID_AGE_RANGES = new Set([
   "29 سنة و أكثر",
 ]);
 
+const SUBMITTED_COOKIE = "newsStudyCompleted";
+
 function isValidEmail(value) {
   const trimmed = String(value ?? "").trim();
   if (!trimmed) return false;
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(trimmed);
 }
 
+/** Returns true if the browser cookie indicates this participant already submitted. */
+function hasAlreadySubmittedCookie() {
+  if (typeof document === "undefined") return false;
+  return document.cookie
+    .split(";")
+    .some((c) => c.trim().startsWith(`${SUBMITTED_COOKIE}=1`));
+}
+
+/** Writes the submitted cookie (1 year). */
+function writeSubmittedCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = `${SUBMITTED_COOKIE}=1; path=/; max-age=31536000; SameSite=Lax`;
+}
+
 // ─── Feeling column keys MUST match the template header exactly ───────────────
-// Template row-2 headers (with literal \n):
-//   feeling_amazement\n(الدهشة والانبهار)
-//   feeling_suspicion\n(الارتياب والشك)
-//   feeling_deception\n(الخداع)
-//   feeling_reassurance\n(الاطمئنان)
-//   feeling_indifference\n(عدم المبالاة)
-//   feeling_other\n(أخرى)
-//   otherFeelingText\n(نص أخرى)
-//
-// The labels here MUST match the postExperimentFeelings array in page.js exactly.
 export const FEELING_COLUMN_MAP = [
   {
     label: "الدهشة والانبهار (لم أتوقع أن تكون الآلة بهذا المستوى من الجودة).",
@@ -59,10 +65,6 @@ export const FEELING_COLUMN_MAP = [
   },
 ];
 
-/**
- * Converts the feelings array into individual نعم/لا columns for the sheet.
- * Keys match the template header row exactly (including embedded newlines).
- */
 export function feelingsToColumns(feelingsArray) {
   const result = {};
   for (const { label, key } of FEELING_COLUMN_MAP) {
@@ -70,13 +72,6 @@ export function feelingsToColumns(feelingsArray) {
   }
   return result;
 }
-
-// ─── Form field keys that map to template Likert columns ─────────────────────
-// Template column name            → form key used here
-// "Q7 - صحة المعلومات"           → "Q7 - صحة المعلومات"
-// "Q8 - التوازن"                  → "Q8 - التوازن"
-// … and so on.  We store answers by the EXACT template column name so the
-// submission payload can be sent directly without any remapping.
 
 export function useSurveyController({
   totalSteps,
@@ -129,16 +124,17 @@ export function useSurveyController({
     useState(true);
   const [classificationError, setClassificationError] = useState("");
 
-  // ── Form state keys match template column names exactly ──────────────────
+  // Detect if participant already completed the survey (client-side cookie check).
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+  useEffect(() => {
+    if (hasAlreadySubmittedCookie()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAlreadySubmitted(true);
+    }
+  }, []);
+
   const [form, setForm] = useState({
-    // Meta (submitted by controller, not user-editable)
-    // participantId, submitted_at, classificationCode, disclosure, completed
-    // → injected at submission time
-
-    // Consent
     consent: "",
-
-    // Demographics
     email: "",
     gender: "",
     age: "",
@@ -148,8 +144,6 @@ export function useSurveyController({
     internetUsage: "",
     university: "",
     deleteDataRequest: false,
-
-    // Pre-test  (Q7–Q13)
     "Q7 - صحة المعلومات": "",
     "Q8 - التوازن": "",
     "Q9 - التغطية": "",
@@ -157,55 +151,33 @@ export function useSurveyController({
     "Q11 - المشاركة": "",
     "Q12 - التوصية": "",
     "Q13 - الاعتماد": "",
-
-    // Manipulation check (Q15–Q16)
     "Q15 - مساهمة البشر": "",
     "Q16 - نوع المصدر": "",
-
-    // Post credibility (Q17–Q20)
     "Q17 - الصحة": "",
     "Q18 - التوازن": "",
     "Q19 - التغطية": "",
     "Q20 - الفائدة": "",
-
-    // Trust – Competence (Q21–Q22)
     "Q21 - الخبرة": "",
     "Q22 - الدقة": "",
-
-    // Trust – Integrity (Q23–Q25)
     "Q23 - الأمانة": "",
     "Q24 - الأخلاق": "",
     "Q25 - الشفافية": "",
-
-    // Trust – Benevolence (Q26–Q28)
     "Q26 - المصلحة": "",
     "Q27 - تجنب الضرر": "",
     "Q28 - القيم": "",
-
-    // Behavioral Intention (Q29–Q31)
     "Q29 - المشاركة": "",
     "Q30 - التوصية": "",
     "Q31 - الاعتماد": "",
-
-    // Cognitive Dissonance (Q32–Q34)
     "Q32 - الارتباك": "",
     "Q33 - التعارض": "",
     "Q34 - خيبة الأمل": "",
-
-    // Collective Culture (Q35–Q38)
     "Q35 - الانتماء": "",
     "Q36 - الثقة الجماعية": "",
     "Q37 - الهوية": "",
     "Q38 - التعاون": "",
-
-    // AI Technical Knowledge (Q39–Q40)
     "Q39 - تمييز النص": "",
     "Q40 - الهلوسة": "",
-
-    // Attention Check (Q41)
     "Q41 - الانتباه": "",
-
-    // Post-experiment open fields
     futureBehavior: "",
     finalExplanation: "",
     otherFeelingText: "",
@@ -251,7 +223,7 @@ export function useSurveyController({
     return () => clearTimeout(timer);
   }, [assignClassification]);
 
-  // ── Derived payload (used for live debug / preview only) ─────────────────
+  // ── Derived payload ───────────────────────────────────────────────────────
   const payload = useMemo(
     () => ({
       ...form,
@@ -412,25 +384,17 @@ export function useSurveyController({
       setError("");
 
       try {
-        // Convert numeric Likert values → Arabic text labels
         const formWithLikertText = { ...form };
         for (const key of likertKeys) {
           formWithLikertText[key] = LIKERT_LABELS[form[key]] ?? form[key];
         }
 
-        // Build the submission payload — keys must match template columns exactly
         const submissionData = {
-          // ── Meta ──────────────────────────────────────────────────────────
-          // participantId is added server-side from the cookie
           submitted_at: new Date().toISOString(),
           classificationCode,
           disclosure: disclosureText,
           completed: true,
-
-          // ── Consent ───────────────────────────────────────────────────────
           consent: formWithLikertText.consent,
-
-          // ── Demographics ──────────────────────────────────────────────────
           email: formWithLikertText.email,
           gender: formWithLikertText.gender,
           age: formWithLikertText.age,
@@ -440,8 +404,6 @@ export function useSurveyController({
           internetUsage: formWithLikertText.internetUsage,
           university: formWithLikertText.university,
           deleteDataRequest: formWithLikertText.deleteDataRequest,
-
-          // ── Pre-test (Q7–Q13) ─────────────────────────────────────────────
           "Q7 - صحة المعلومات": formWithLikertText["Q7 - صحة المعلومات"],
           "Q8 - التوازن": formWithLikertText["Q8 - التوازن"],
           "Q9 - التغطية": formWithLikertText["Q9 - التغطية"],
@@ -449,59 +411,35 @@ export function useSurveyController({
           "Q11 - المشاركة": formWithLikertText["Q11 - المشاركة"],
           "Q12 - التوصية": formWithLikertText["Q12 - التوصية"],
           "Q13 - الاعتماد": formWithLikertText["Q13 - الاعتماد"],
-
-          // ── Manipulation check (Q15–Q16) ───────────────────────────────────
           "Q15 - مساهمة البشر": formWithLikertText["Q15 - مساهمة البشر"],
           "Q16 - نوع المصدر": formWithLikertText["Q16 - نوع المصدر"],
-
-          // ── Post credibility (Q17–Q20) ────────────────────────────────────
           "Q17 - الصحة": formWithLikertText["Q17 - الصحة"],
           "Q18 - التوازن": formWithLikertText["Q18 - التوازن"],
           "Q19 - التغطية": formWithLikertText["Q19 - التغطية"],
           "Q20 - الفائدة": formWithLikertText["Q20 - الفائدة"],
-
-          // ── Trust – Competence (Q21–Q22) ──────────────────────────────────
           "Q21 - الخبرة": formWithLikertText["Q21 - الخبرة"],
           "Q22 - الدقة": formWithLikertText["Q22 - الدقة"],
-
-          // ── Trust – Integrity (Q23–Q25) ───────────────────────────────────
           "Q23 - الأمانة": formWithLikertText["Q23 - الأمانة"],
           "Q24 - الأخلاق": formWithLikertText["Q24 - الأخلاق"],
           "Q25 - الشفافية": formWithLikertText["Q25 - الشفافية"],
-
-          // ── Trust – Benevolence (Q26–Q28) ────────────────────────────────
           "Q26 - المصلحة": formWithLikertText["Q26 - المصلحة"],
           "Q27 - تجنب الضرر": formWithLikertText["Q27 - تجنب الضرر"],
           "Q28 - القيم": formWithLikertText["Q28 - القيم"],
-
-          // ── Behavioral Intention (Q29–Q31) ────────────────────────────────
           "Q29 - المشاركة": formWithLikertText["Q29 - المشاركة"],
           "Q30 - التوصية": formWithLikertText["Q30 - التوصية"],
           "Q31 - الاعتماد": formWithLikertText["Q31 - الاعتماد"],
-
-          // ── Cognitive Dissonance (Q32–Q34) ───────────────────────────────
           "Q32 - الارتباك": formWithLikertText["Q32 - الارتباك"],
           "Q33 - التعارض": formWithLikertText["Q33 - التعارض"],
           "Q34 - خيبة الأمل": formWithLikertText["Q34 - خيبة الأمل"],
-
-          // ── Collective Culture (Q35–Q38) ──────────────────────────────────
           "Q35 - الانتماء": formWithLikertText["Q35 - الانتماء"],
           "Q36 - الثقة الجماعية": formWithLikertText["Q36 - الثقة الجماعية"],
           "Q37 - الهوية": formWithLikertText["Q37 - الهوية"],
           "Q38 - التعاون": formWithLikertText["Q38 - التعاون"],
-
-          // ── AI Technical Knowledge (Q39–Q40) ─────────────────────────────
           "Q39 - تمييز النص": formWithLikertText["Q39 - تمييز النص"],
           "Q40 - الهلوسة": formWithLikertText["Q40 - الهلوسة"],
-
-          // ── Attention Check (Q41) ─────────────────────────────────────────
           "Q41 - الانتباه": formWithLikertText["Q41 - الانتباه"],
-
-          // ── Feelings (individual نعم/لا columns) ─────────────────────────
           ...feelingsToColumns(feelings),
           "otherFeelingText\n(نص أخرى)": formWithLikertText.otherFeelingText,
-
-          // ── Post-experiment open fields ────────────────────────────────────
           futureBehavior: formWithLikertText.futureBehavior,
           finalExplanation: formWithLikertText.finalExplanation,
         };
@@ -513,6 +451,9 @@ export function useSurveyController({
         });
 
         if (!res.ok) throw new Error("Submission failed");
+
+        // Mark as completed in browser cookie so re-entry is blocked.
+        writeSubmittedCookie();
 
         setSubmitted(true);
         setStep(11);
@@ -542,6 +483,7 @@ export function useSurveyController({
     feelings,
     attentionFlag,
     payload,
+    alreadySubmitted,
     updateField,
     toggleFeeling,
     next,
