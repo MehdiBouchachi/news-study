@@ -284,7 +284,6 @@ export default function Home() {
     submitted,
     isSubmitting,
     classificationCode,
-    disclosureText,
     isAssigningClassification,
     classificationError,
     form,
@@ -311,6 +310,12 @@ export default function Home() {
     aiTechnicalKnowledgeQuestions,
     attentionCheckQuestion,
   });
+
+  // Always derive disclosureText from the local CLASSIFICATIONS array using the
+  // code returned by the API — never trust the API's text value directly.
+  const disclosureText =
+    CLASSIFICATIONS.find((c) => c.code === classificationCode)
+      ?.disclosureText ?? "";
 
   useStepScroll(step);
 
