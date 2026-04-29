@@ -1109,14 +1109,26 @@ export default function Home() {
               <FieldLabel required>
                 بناءً على تجربتك اليوم، كيف ستكون طريقتك في تقييم الأخبار
                 الرقمية مستقبلاً؟
+                <span className="mr-2 text-xs font-normal text-(--error)">
+                  (يمكنك اختيار أكثر من إجابة)
+                </span>
               </FieldLabel>
 
-              <RadioGroup
-                name="futureBehavior"
-                value={form.futureBehavior}
-                onChange={updateField}
-                options={futureBehaviorOptions}
-              />
+              <div className="space-y-2.5">
+                {futureBehaviorOptions.map((item) => (
+                  <CheckOption
+                    key={item}
+                    checked={form.futureBehavior.includes(item)}
+                    onChange={() => {
+                      const updated = form.futureBehavior.includes(item)
+                        ? form.futureBehavior.filter((i) => i !== item)
+                        : [...form.futureBehavior, item];
+                      updateField("futureBehavior", updated);
+                    }}
+                    label={item}
+                  />
+                ))}
+              </div>
             </div>
 
             <div>

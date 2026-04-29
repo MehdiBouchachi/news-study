@@ -178,7 +178,7 @@ export function useSurveyController({
     "Q39 - تمييز النص": "",
     "Q40 - الهلوسة": "",
     "Q41 - الانتباه": "",
-    futureBehavior: "",
+    futureBehavior: [],
     finalExplanation: "",
     otherFeelingText: "",
   });
@@ -343,7 +343,7 @@ export function useSurveyController({
     if (step === 10) {
       if (
         feelings.length === 0 ||
-        !form.futureBehavior ||
+        form.futureBehavior.length === 0 ||
         !form.finalExplanation.trim() ||
         !form.university
       ) {
