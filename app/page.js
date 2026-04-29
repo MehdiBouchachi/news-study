@@ -907,7 +907,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div>
+          <div className="mb-8">
             <h3 className="mb-4 text-lg font-semibold text-right text-(--text-strong)">
               حسن النوايا
             </h3>
