@@ -15,7 +15,9 @@ const VALID_AGE_RANGES = new Set([
   "29 سنة و أكثر",
 ]);
 
-const SUBMITTED_COOKIE = "newsStudyCompleted";
+// Versioned submitted cookie - change version to allow previous-version
+// participants to re-submit in the new study release.
+const SUBMITTED_COOKIE = "newsStudyCompleted_v2";
 
 function isValidEmail(value) {
   const trimmed = String(value ?? "").trim();
@@ -341,6 +343,11 @@ export function useSurveyController({
     }
 
     if (step === 10) {
+      // If participant is in C1 (fully human) we intentionally hide this
+      // post-experiment section and submit it as empty/null. Skip validation
+      // for step 10 in that case so the flow can continue.
+      if (classificationCode === "C1") return true;
+
       if (
         feelings.length === 0 ||
         form.futureBehavior.length === 0 ||
@@ -387,6 +394,18 @@ export function useSurveyController({
         const formWithLikertText = { ...form };
         for (const key of likertKeys) {
           formWithLikertText[key] = LIKERT_LABELS[form[key]] ?? form[key];
+        }
+
+        // For C1 participants the post-experiment fields are intentionally
+        // omitted/cleared. Build a submission-specific form and feelings
+        // set based on classificationCode.
+        const submissionFeelings = classificationCode === "C1" ? [] : feelings;
+        const submissionForm = { ...formWithLikertText };
+        if (classificationCode === "C1") {
+          submissionForm.futureBehavior = [];
+          submissionForm.finalExplanation = "";
+          submissionForm.otherFeelingText = "";
+          submissionForm.university = null;
         }
 
         const submissionData = {
@@ -438,10 +457,10 @@ export function useSurveyController({
           "Q39 - تمييز النص": formWithLikertText["Q39 - تمييز النص"],
           "Q40 - الهلوسة": formWithLikertText["Q40 - الهلوسة"],
           "Q41 - الانتباه": formWithLikertText["Q41 - الانتباه"],
-          ...feelingsToColumns(feelings),
-          "otherFeelingText\n(نص أخرى)": formWithLikertText.otherFeelingText,
-          futureBehavior: formWithLikertText.futureBehavior,
-          finalExplanation: formWithLikertText.finalExplanation,
+          ...feelingsToColumns(submissionFeelings),
+          "otherFeelingText\n(نص أخرى)": submissionForm.otherFeelingText,
+          futureBehavior: submissionForm.futureBehavior,
+          finalExplanation: submissionForm.finalExplanation,
         };
 
         const res = await fetch("/api/survey-submit", {

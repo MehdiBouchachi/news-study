@@ -693,11 +693,11 @@ export default function Home() {
 
           <div className="rounded-md bg-(--warning-bg) px-5 py-5 sm:px-6 sm:py-6">
             <p className="text-right text-sm leading-8 text-(--text-body) sm:text-base">
-              «عزيزي الطالب، ستُعرض عليك الآن أخبار قصيرة تتناول قضايا معاصرة
-              (طبية، بيئية، وتقنية). نرجو منك قراءة كل خبر بعناية وتركيز تامين،
-              وكأنك تتصفحه في وسيلة إعلامية رسمية، حيث إن إجاباتك اللاحقة تعتمد
-              كلياً على فهمك الدقيق لمحتوى هذه النصوص وأسلوب صياغتها. بعد قراءة
-              كل خبر ستظهر لك مجموعة من الأسئلة لتقييم انطباعك الأول حوله.»
+              «عزيزي الطالب، ستُعرض عليك الآن خبر قصير يتناول قضية معاصرة
+              (طبية). نرجو منك قراءة الخبر بعناية وتركيز تامين， وكأنك تتصفحه في
+              وسيلة إعلامية رسمية، حيث إن إجاباتك اللاحقة تعتمد كلياً على فهمك
+              الدقيق لمحتوى هذه النصوص وأسلوب صياغتها. بعد قراءة كل خبر ستظهر لك
+              مجموعة من الأسئلة لتقييم انطباعك الأول حوله.»
             </p>
 
             <div className="mt-5 border-t border-(--warning-border) pt-4">
@@ -1067,129 +1067,131 @@ export default function Home() {
       {/* ── Step 10: Post-experiment ─────────────────────────────────────── */}
       {step === 10 && (
         <StepSection>
-          <SectionHeading eyebrow="الخطوة 8" title="ما بعد التجربة" />
+          {/* Hide only the post-experiment inputs (feelings, future behavior,
+              final explanation) for C1 participants. Keep the demographics
+              (section 9) visible to all participants. */}
+          {classificationCode !== "C1" && (
+            <div className="space-y-8">
+              <SectionHeading eyebrow="الخطوة 8" title="ما بعد التجربة" />
 
-          <div className="space-y-8">
-            <div>
-              <FieldLabel>
-                ما هو شعورك اللحظي أو انطباعك الأول عند اكتشاف هوية المصدر في
-                منتصف التجربة؟
-                <span className="mr-2 text-xs font-normal text-(--error)">
-                  (يمكنك اختيار أكثر من إجابة)
-                </span>
-              </FieldLabel>
+              <div>
+                <FieldLabel>
+                  ما هو شعورك اللحظي أو انطباعك الأول عند اكتشاف هوية المصدر في
+                  منتصف التجربة؟
+                  <span className="mr-2 text-xs font-normal text-(--error)">
+                    (يمكنك اختيار أكثر من إجابة)
+                  </span>
+                </FieldLabel>
 
-              <div className="space-y-2.5">
-                {postExperimentFeelings.map((item) => (
-                  <CheckOption
-                    key={item}
-                    checked={feelings.includes(item)}
-                    onChange={() => toggleFeeling(item)}
-                    label={item}
-                  />
-                ))}
-              </div>
-
-              {feelings.includes("أخرى (يرجى تحديد شعورك بدقة)") && (
-                <div className="mt-3">
-                  <TextField
-                    value={form.otherFeelingText}
-                    onChange={(e) =>
-                      updateField("otherFeelingText", e.target.value)
-                    }
-                    placeholder="اكتب الشعور الآخر هنا..."
-                  />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <FieldLabel required>
-                بناءً على تجربتك اليوم، كيف ستكون طريقتك في تقييم الأخبار
-                الرقمية مستقبلاً؟
-                <span className="mr-2 text-xs font-normal text-(--error)">
-                  (يمكنك اختيار أكثر من إجابة)
-                </span>
-              </FieldLabel>
-
-              <div className="space-y-2.5">
-                {futureBehaviorOptions.map((item) => (
-                  <CheckOption
-                    key={item}
-                    checked={form.futureBehavior.includes(item)}
-                    onChange={() => {
-                      const updated = form.futureBehavior.includes(item)
-                        ? form.futureBehavior.filter((i) => i !== item)
-                        : [...form.futureBehavior, item];
-                      updateField("futureBehavior", updated);
-                    }}
-                    label={item}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <FieldLabel required>
-                يرجى توضيح سبب اختيارك للإجابة السابقة بإيجاز، وكيف أثرت هذه
-                التجربة على نظرتك «للثقة» في الإعلام الرقمي؟
-              </FieldLabel>
-
-              <TextareaField
-                value={form.finalExplanation}
-                onChange={(e) =>
-                  updateField("finalExplanation", e.target.value)
-                }
-                placeholder="اكتب إجابتك هنا..."
-                rows={6}
-              />
-            </div>
-
-            <div className="rounded-md border border-(--border) bg-white p-5 shadow-(--shadow-xs) sm:p-6">
-              <SectionHeading
-                eyebrow="القسم 9"
-                title="الديموغرافيا النهائية"
-                subtitle="(السؤال 42)"
-              />
-
-              <div className="space-y-6">
-                <div>
-                  <FieldLabel required>42. الجامعة التي تدرس بها:</FieldLabel>
-                  <RadioGroup
-                    name="university"
-                    value={form.university}
-                    onChange={updateField}
-                    options={demographics.universities}
-                    columns={2}
-                  />
-                </div>
-
-                <div className="rounded-md border border-(--border) bg-(--surface-alt) px-4 py-4 text-right text-sm leading-8 text-(--text-body)">
-                  <p className="font-semibold text-(--text-strong)">
-                    43. شكراً لمشاركتك القيمة!
-                  </p>
-                  <p className="mt-2">
-                    إخفاء مصدر الخبر في البداية كان ضرورة علمية لقياس تقييماتك
-                    العفوية دون تحيز مسبق. بياناتك مشفّرة وسرية تامة.
-                  </p>
-                  <p className="mt-2">
-                    في حال رغبتك بحذف بياناتك، يمكنك التواصل معنا عبر:
-                    <span className="mx-1 font-semibold text-(--blue-800)">
-                      research@media-algeria.dz
-                    </span>
-                  </p>
-                  <div className="mt-3">
+                <div className="space-y-2.5">
+                  {postExperimentFeelings.map((item) => (
                     <CheckOption
-                      checked={Boolean(form.deleteDataRequest)}
-                      onChange={() =>
-                        updateField(
-                          "deleteDataRequest",
-                          !form.deleteDataRequest,
-                        )
+                      key={item}
+                      checked={feelings.includes(item)}
+                      onChange={() => toggleFeeling(item)}
+                      label={item}
+                    />
+                  ))}
+                </div>
+
+                {feelings.includes("أخرى (يرجى تحديد شعورك بدقة)") && (
+                  <div className="mt-3">
+                    <TextField
+                      value={form.otherFeelingText}
+                      onChange={(e) =>
+                        updateField("otherFeelingText", e.target.value)
                       }
-                      label="أرغب بحذف بياناتي"
+                      placeholder="اكتب الشعور الآخر هنا..."
                     />
                   </div>
+                )}
+              </div>
+
+              <div>
+                <FieldLabel required>
+                  بناءً على تجربتك اليوم، كيف ستكون طريقتك في تقييم الأخبار
+                  الرقمية مستقبلاً؟
+                  <span className="mr-2 text-xs font-normal text-(--error)">
+                    (يمكنك اختيار أكثر من إجابة)
+                  </span>
+                </FieldLabel>
+
+                <div className="space-y-2.5">
+                  {futureBehaviorOptions.map((item) => (
+                    <CheckOption
+                      key={item}
+                      checked={form.futureBehavior.includes(item)}
+                      onChange={() => {
+                        const updated = form.futureBehavior.includes(item)
+                          ? form.futureBehavior.filter((i) => i !== item)
+                          : [...form.futureBehavior, item];
+                        updateField("futureBehavior", updated);
+                      }}
+                      label={item}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel required>
+                  يرجى توضيح سبب اختيارك للإجابة السابقة بإيجاز، وكيف أثرت هذه
+                  التجربة على نظرتك «للثقة» في الإعلام الرقمي؟
+                </FieldLabel>
+
+                <TextareaField
+                  value={form.finalExplanation}
+                  onChange={(e) =>
+                    updateField("finalExplanation", e.target.value)
+                  }
+                  placeholder="اكتب إجابتك هنا..."
+                  rows={6}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="rounded-md border border-(--border) bg-white p-5 shadow-(--shadow-xs) sm:p-6 mt-6">
+            <SectionHeading
+              eyebrow="القسم 9"
+              title="الديموغرافيا النهائية"
+              subtitle="(السؤال 42)"
+            />
+
+            <div className="space-y-6">
+              <div>
+                <FieldLabel required>42. الجامعة التي تدرس بها:</FieldLabel>
+                <RadioGroup
+                  name="university"
+                  value={form.university}
+                  onChange={updateField}
+                  options={demographics.universities}
+                  columns={2}
+                />
+              </div>
+
+              <div className="rounded-md border border-(--border) bg-(--surface-alt) px-4 py-4 text-right text-sm leading-8 text-(--text-body)">
+                <p className="font-semibold text-(--text-strong)">
+                  43. شكراً لمشاركتك القيمة!
+                </p>
+                <p className="mt-2">
+                  إخفاء مصدر الخبر في البداية كان ضرورة علمية لقياس تقييماتك
+                  العفوية دون تحيز مسبق. بياناتك مشفّرة وسرية تامة.
+                </p>
+                <p className="mt-2">
+                  في حال رغبتك بحذف بياناتك، يمكنك التواصل معنا عبر:
+                  <span className="mx-1 font-semibold text-(--blue-800)">
+                    research@media-algeria.dz
+                  </span>
+                </p>
+                <div className="mt-3">
+                  <CheckOption
+                    checked={Boolean(form.deleteDataRequest)}
+                    onChange={() =>
+                      updateField("deleteDataRequest", !form.deleteDataRequest)
+                    }
+                    label="أرغب بحذف بياناتي"
+                  />
                 </div>
               </div>
             </div>
